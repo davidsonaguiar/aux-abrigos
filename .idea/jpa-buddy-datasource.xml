@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="JpbDataSourceConfig">
+    <data-sources>
+      <data-source id="068dcc5b-de7b-44dd-93ab-1e03afe9d8e6" name="aux-abrigos-db" url="jdbc:postgresql://localhost/aux-abrigos-db" driverClass="org.postgresql.Driver" />
+    </data-sources>
+    <data-source-infos>
+      <data-source-info id="068dcc5b-de7b-44dd-93ab-1e03afe9d8e6" persistence-unit-name="aux-abrigos-persistence-unit" />
+    </data-source-infos>
+  </component>
+</project>
