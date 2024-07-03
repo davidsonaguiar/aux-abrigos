@@ -1,8 +1,10 @@
 package com.compass.center;
 
+import com.compass.item.ItemEntity;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -22,6 +24,9 @@ public class CenterEntity implements Serializable {
 
     @Column(nullable = false)
     private Integer capacity;
+
+    @OneToMany(mappedBy = "center", cascade = CascadeType.ALL)
+    private List<ItemEntity> items;
 
     public CenterEntity() {}
 
@@ -62,6 +67,14 @@ public class CenterEntity implements Serializable {
 
     public void setCapacity(Integer capacity) {
         this.capacity = capacity;
+    }
+
+    public List<ItemEntity> getItems() {
+        return items;
+    }
+
+    public void setItems(List<ItemEntity> items) {
+        this.items = items;
     }
 
     @Override
