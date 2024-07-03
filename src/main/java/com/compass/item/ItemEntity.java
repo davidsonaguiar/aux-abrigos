@@ -1,5 +1,6 @@
 package com.compass.item;
 
+import com.compass.center.CenterEntity;
 import com.compass.item.enums.SexItem;
 import com.compass.item.enums.SizeItem;
 import com.compass.item.enums.TypeItem;
@@ -32,6 +33,10 @@ public class ItemEntity implements Serializable {
 
     @Column(nullable = false)
     private Integer quantity;
+
+    @ManyToOne
+    @JoinColumn(name = "center_id")
+    private CenterEntity center;
 
     public ItemEntity() {}
 
