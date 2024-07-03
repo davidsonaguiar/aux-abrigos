@@ -1,10 +1,13 @@
 package com.compass.order;
 
+import com.compass.item.ItemEntity;
 import com.compass.order.enums.StatusOrder;
+import com.compass.shelter.ShelterEntity;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -22,6 +25,14 @@ public class OrderEntity implements Serializable {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private StatusOrder status;
+
+    @ManyToOne
+    @JoinColumn(name = "shelter_id")
+    private ShelterEntity shelter;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "item_id")
+    private List<ItemEntity> items;
 
     public OrderEntity() {}
 

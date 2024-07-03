@@ -1,8 +1,10 @@
 package com.compass.shelter;
 
+import com.compass.item.ItemEntity;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -34,6 +36,9 @@ public class ShelterEntity implements Serializable {
 
     @Column(nullable = false)
     private Integer occupancy;
+
+    @OneToMany(mappedBy = "shelter", cascade = CascadeType.ALL)
+    private List<ItemEntity> items;
 
     public ShelterEntity() {}
 

@@ -4,6 +4,7 @@ import com.compass.center.CenterEntity;
 import com.compass.item.enums.SexItem;
 import com.compass.item.enums.SizeItem;
 import com.compass.item.enums.TypeItem;
+import com.compass.shelter.ShelterEntity;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
@@ -37,6 +38,10 @@ public class ItemEntity implements Serializable {
     @ManyToOne
     @JoinColumn(name = "center_id")
     private CenterEntity center;
+
+    @ManyToOne
+    @JoinColumn(name = "shelter_id")
+    private ShelterEntity shelter;
 
     public ItemEntity() {}
 
