@@ -31,7 +31,7 @@ public class OrderEntity implements Serializable {
     private ShelterEntity shelter;
 
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "item_id")
+    @JoinColumn(name = "ordem_id")
     private List<ItemEntity> items;
 
     public OrderEntity() {}

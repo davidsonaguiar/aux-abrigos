@@ -92,11 +92,12 @@ public class CenterEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "CenterEntity{" +
+        return "CenterEntity{ " +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", address='" + address + '\'' +
                 ", capacity=" + capacity +
+                ", items=" + items + " " +
                 '}';
     }
 }

@@ -45,11 +45,12 @@ public class ItemEntity implements Serializable {
 
     public ItemEntity() {}
 
-    public ItemEntity(Long id, String name, TypeItem type, SizeItem size, Integer quantity) {
+    public ItemEntity(Long id, String name, TypeItem type, SizeItem size, SexItem sex, Integer quantity) {
         this.id = id;
         this.name = name;
         this.type = type;
         this.size = size;
+        this.sex = sex;
         this.quantity = quantity;
     }
 
