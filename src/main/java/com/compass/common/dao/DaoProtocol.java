@@ -1,4 +1,4 @@
-package com.compass.common;
+package com.compass.common.dao;
 
 public interface DaoProtocol<Entity, ID> {
     Entity save(Entity entity);

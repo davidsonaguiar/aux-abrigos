@@ -53,6 +53,22 @@ public class DonationEntity implements Serializable {
         this.date = date;
     }
 
+    public CenterEntity getCenter() {
+        return center;
+    }
+
+    public void setCenter(CenterEntity center) {
+        this.center = center;
+    }
+
+    public List<ItemEntity> getItems() {
+        return items;
+    }
+
+    public void setItems(List<ItemEntity> items) {
+        this.items = items;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
