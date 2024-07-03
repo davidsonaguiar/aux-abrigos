@@ -96,6 +96,14 @@ public class ItemEntity implements Serializable {
         this.quantity = quantity;
     }
 
+    public CenterEntity getCenter() {
+        return center;
+    }
+
+    public void setCenter(CenterEntity center) {
+        this.center = center;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
