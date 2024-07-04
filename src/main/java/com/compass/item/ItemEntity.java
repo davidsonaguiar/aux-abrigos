@@ -6,12 +6,14 @@ import com.compass.item.enums.SizeItem;
 import com.compass.item.enums.TypeItem;
 import com.compass.shelter.ShelterEntity;
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
 @Table(name = "TB_ITEMS")
+@Data
 public class ItemEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -42,95 +44,4 @@ public class ItemEntity implements Serializable {
     @ManyToOne
     @JoinColumn(name = "shelter_id")
     private ShelterEntity shelter;
-
-    public ItemEntity() {}
-
-    public ItemEntity(Long id, String name, TypeItem type, SizeItem size, SexItem sex, Integer quantity) {
-        this.id = id;
-        this.name = name;
-        this.type = type;
-        this.size = size;
-        this.sex = sex;
-        this.quantity = quantity;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public TypeItem getType() {
-        return type;
-    }
-
-    public void setType(TypeItem type) {
-        this.type = type;
-    }
-
-    public SizeItem getSize() {
-        return size;
-    }
-
-    public void setSize(SizeItem size) {
-        this.size = size;
-    }
-
-    public SexItem getSex() {
-        return sex;
-    }
-
-    public void setSex(SexItem sex) {
-        this.sex = sex;
-    }
-
-    public Integer getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(Integer quantity) {
-        this.quantity = quantity;
-    }
-
-    public CenterEntity getCenter() {
-        return center;
-    }
-
-    public void setCenter(CenterEntity center) {
-        this.center = center;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ItemEntity that = (ItemEntity) o;
-        return Objects.equals(id, that.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(id);
-    }
-
-    @Override
-    public String toString() {
-        return "ItemEntity{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", type=" + type +
-                ", size=" + size +
-                ", quantity=" + quantity +
-                '}';
-    }
 }
