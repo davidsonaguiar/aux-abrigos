@@ -33,7 +33,7 @@ public class ItemEntity implements Serializable {
     private TypeItem type;
 
     @Enumerated(EnumType.STRING)
-    @Pattern(regexp = "^(Infantil|PP|P|M|G|GG)$", message = "Tamanho do item deve ser Infantil, PP, P, M, G ou GG")
+    @Pattern(regexp = "^(Infantil|PP|P|M|G|GG)$", message = "Tamanho da Roupa deve ser Infantil, PP, P, M, G ou GG")
     private SizeItem size;
 
     @Enumerated(EnumType.STRING)
