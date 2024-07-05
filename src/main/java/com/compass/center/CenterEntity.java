@@ -33,6 +33,7 @@ public class CenterEntity implements Serializable {
 
     @Column(nullable = false)
     @NotBlank(message = "Endereço do centro é obrigatório")
+    @Size(min = 3, max = 100, message = "Endereço do centro deve ter entre 3 e 100 caracteres")
     private String address;
 
     @Column(nullable = false)

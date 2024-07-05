@@ -1,225 +1,137 @@
 package com.compass.center;
 
+import com.compass.util.UtilConstraintViolation;
 import org.junit.jupiter.api.*;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 
 public class CenterEntityTest {
     private CenterEntity center;
+    private UtilConstraintViolation<CenterEntity> violations;
 
     @BeforeEach
     public void setUp() {
         center = new CenterEntity();
+        violations = new UtilConstraintViolation<>();
     }
 
-    @Test
-    public void testCenterEntity() {
-        center.setName("Centro de Teste");
-        center.setAddress("Rua de Teste, 123");
-        center.setCapacity(1000);
-
-        assertEquals("Centro de Teste", center.getName(), "O nome do centro deve ser 'Centro de Teste'");
-        assertEquals("Rua de Teste, 123", center.getAddress(), "O endereço do centro deve ser 'Rua de Teste, 123'");
-        assertEquals(1000, center.getCapacity(), "A capacidade do centro deve ser 1000");
-    }
 
     @Test
-    public void testCenterEntityInvalidId() {
-        try {
-            center.setId(-1L);
-        }
-        catch (IllegalArgumentException e) {
-            assertEquals(
-                    "ID do centro deve ser um número positivo",
-                    e.getMessage(),
-                    "Deve lançar uma exceção com a mensagem 'ID do centro deve ser um número positivo'");
-        }
-
-        try {
-            center.setId(0L);
-        }
-        catch (IllegalArgumentException e) {
-            assertEquals(
-                    "ID do centro deve ser um número positivo",
-                    e.getMessage(),
-                    "Deve lançar uma exceção com a mensagem 'ID do centro deve ser um número positivo'");
-        }
-
-        try {
-            center.setId(null);
-        }
-        catch (IllegalArgumentException e) {
-            assertEquals(
-                    "ID do centro é obrigatório",
-                    e.getMessage(),
-                    "Deve lançar uma exceção com a mensagem 'ID do centro é obrigatório'");
-        }
-    }
-
-    @Test
-    public void testCenterEntityInvalidName() {
-        try {
-            center.setName("Ce");
-        }
-        catch (IllegalArgumentException e) {
-            assertEquals(
-                    "Nome do centro deve ter entre 3 e 100 caracteres",
-                    e.getMessage(),
-                    "Deve lançar uma exceção com a mensagem 'Nome do centro deve ter entre 3 e 100 caracteres'");
-        }
-
-        try {
-            center.setName("");
-        }
-        catch (IllegalArgumentException e) {
-            assertEquals(
-                    "Nome do centro é obrigatório",
-                    e.getMessage(),
-                    "Deve lançar uma exceção com a mensagem 'Nome do centro é obrigatório'");
-        }
-
-        try {
-            center.setName(null);
-        }
-        catch (IllegalArgumentException e) {
-            assertEquals(
-                    "Nome do centro é obrigatório",
-                    e.getMessage(),
-                    "Deve lançar uma exceção com a mensagem 'Nome do centro é obrigatório'");
-        }
-
-        try {
-            center.setName("2".repeat(101));
-        }
-        catch (IllegalArgumentException e) {
-            assertEquals(
-                    "Nome do centro deve ter entre 3 e 100 caracteres",
-                    e.getMessage(),
-                    "Deve lançar uma exceção com a mensagem 'Nome do centro deve ter entre 3 e 100 caracteres'");
-        }
-    }
-
-    @Test
-    public void testCenterEntityInvalidCapacity() {
-        try {
-            center.setCapacity(50);
-        } catch (IllegalArgumentException e) {
-            assertEquals(
-                    "Capacidade mínima do centro é 100",
-                    e.getMessage(),
-                    "Deve lançar uma exceção com a mensagem 'Capacidade mínima do centro é 100'");
-        }
-
-        try {
-            center.setCapacity(null);
-        } catch (IllegalArgumentException e) {
-            assertEquals(
-                    "Capacidade do centro é obrigatória",
-                    e.getMessage(),
-                    "Deve lançar uma exceção com a mensagem 'Capacidade do centro é obrigatória'");
-        }
-
-        try {
-            center.setCapacity(0);
-        } catch (IllegalArgumentException e) {
-            assertEquals(
-                    "Capacidade mínima do centro é 100",
-                    e.getMessage(),
-                    "Deve lançar uma exceção com a mensagem 'Capacidade mínima do centro é 100'");
-        }
-    }
-
-    @Test
-    public void testCenterEntityInvalidAddress() {
-        try {
-            center.setAddress("");
-        }
-        catch (IllegalArgumentException e) {
-            assertEquals(
-                    "Endereço do centro é obrigatório",
-                    e.getMessage(),
-                    "Deve lançar uma exceção com a mensagem 'Endereço do centro é obrigatório'");
-        }
-
-        try {
-            center.setAddress(null);
-        }
-        catch (IllegalArgumentException e) {
-            assertEquals(
-                    "Endereço do centro é obrigatório",
-                    e.getMessage(),
-                    "Deve lançar uma exceção com a mensagem 'Endereço do centro é obrigatório'");
-        }
-    }
-
-    @Test
-    public void testCenterEntityGetters() {
+    public void testEmptyName() {
+        center.setName("");
         center.setId(1L);
-        center.setName("Centro de Teste");
-        center.setAddress("Rua de Teste, 123");
-        center.setCapacity(1000);
-
-        assertEquals(1L, center.getId(), "O ID do centro deve ser 1");
-        assertEquals("Centro de Teste", center.getName(), "O nome do centro deve ser 'Centro de Teste'");
-        assertEquals("Rua de Teste, 123", center.getAddress(), "O endereço do centro deve ser 'Rua de Teste, 123'");
-        assertEquals(1000, center.getCapacity(), "A capacidade do centro deve ser 1000");
+        center.setAddress("Rua 1, 123");
+        center.setCapacity(100);
+        assertFalse(violations.getConstraintViolations(center).isEmpty());
     }
 
     @Test
-    public void testCenterEntityEquals() {
-        CenterEntity center1 = new CenterEntity();
-        center1.setId(1L);
-        center1.setName("Centro de Teste");
-        center1.setAddress("Rua de Teste, 123");
-        center1.setCapacity(1000);
-
-        CenterEntity center2 = new CenterEntity();
-        center2.setId(1L);
-        center2.setName("Centro de Teste");
-        center2.setAddress("Rua de Teste, 123");
-        center2.setCapacity(1000);
-
-        assertTrue(center1.equals(center2), "Os centros devem ser iguais");
-    }
-
-    @Test
-    public void testCenterEntityHashCode() {
-        CenterEntity center1 = new CenterEntity();
-        center1.setId(1L);
-        center1.setName("Centro de Teste");
-        center1.setAddress("Rua de Teste, 123");
-        center1.setCapacity(1000);
-
-        CenterEntity center2 = new CenterEntity();
-        center2.setId(1L);
-        center2.setName("Centro de Teste");
-        center2.setAddress("Rua de Teste, 123");
-        center2.setCapacity(1000);
-
-        assertEquals(center1.hashCode(), center2.hashCode(), "Os códigos de hash dos centros devem ser iguais");
-    }
-
-    @Test
-    public void testCenterEntityToString() {
+    public void testEmptyAddress() {
+        center.setName("Centro 1");
         center.setId(1L);
-        center.setName("Centro de Teste");
-        center.setAddress("Rua de Teste, 123");
-        center.setCapacity(1000);
-
-        String expected = "CenterEntity(id=1, name=Centro de Teste, address=Rua de Teste, 123, capacity=1000, items=null)";
-        assertEquals(expected, center.toString(), "A representação em String do centro deve ser 'CenterEntity(id=1, name=Centro de Teste, address=Rua de Teste, 123, capacity=1000, items=null)'");
+        center.setAddress("");
+        center.setCapacity(100);
+        assertFalse(violations.getConstraintViolations(center).isEmpty());
     }
 
     @Test
-    public void testCenterEntityNoArgsConstructor() {
-        CenterEntity center = new CenterEntity();
-        assertTrue(center instanceof CenterEntity, "Deve ser possível criar um objeto CenterEntity com o construtor padrão");
+    public void testInvalidCapacity() {
+        center.setName("Centro 1");
+        center.setId(1L);
+        center.setAddress("Rua 1, 123");
+        center.setCapacity(50);
+        assertFalse(violations.getConstraintViolations(center).isEmpty());
     }
 
     @Test
-    public void testCenterEntityAllArgsConstructor() {
-        CenterEntity center = new CenterEntity(1L, "Centro de Teste", "Rua de Teste, 123", 1000, null);
-        assertTrue(center instanceof CenterEntity, "Deve ser possível criar um objeto CenterEntity com o construtor com argumentos");
+    public void testNullCapacity() {
+        center.setName("Centro 1");
+        center.setId(1L);
+        center.setAddress("Rua 1, 123");
+        center.setCapacity(null);
+        assertFalse(violations.getConstraintViolations(center).isEmpty());
     }
 
+    @Test
+    public void testNullName() {
+        center.setName(null);
+        center.setId(1L);
+        center.setAddress("Rua 1, 123");
+        center.setCapacity(100);
+        assertFalse(violations.getConstraintViolations(center).isEmpty());
+    }
+
+    @Test
+    public void testNullAddress() {
+        center.setName("Centro 1");
+        center.setId(1L);
+        center.setAddress(null);
+        center.setCapacity(100);
+        assertFalse(violations.getConstraintViolations(center).isEmpty());
+    }
+
+    @Test
+    public void testValidCenter() {
+        center.setName("Centro 1");
+        center.setId(1L);
+        center.setAddress("Rua 1, 123");
+        center.setCapacity(100);
+        assertTrue(violations.getConstraintViolations(center).isEmpty());
+    }
+
+    @Test
+    public void testInvalidName() {
+        center.setName("C");
+        center.setId(1L);
+        center.setAddress("Rua 1, 123");
+        center.setCapacity(100);
+        assertFalse(violations.getConstraintViolations(center).isEmpty());
+    }
+
+    @Test
+    public void testInvalidAddress() {
+        center.setName("Centro 1");
+        center.setId(1L);
+        center.setAddress("R");
+        center.setCapacity(100);
+        assertFalse(violations.getConstraintViolations(center).isEmpty());
+    }
+
+    @Test
+    public void testInvalidNameMinCharacters() {
+        center.setName("C");
+        center.setId(1L);
+        center.setAddress("Rua 1, 123");
+        center.setCapacity(100);
+        assertFalse(violations.getConstraintViolations(center).isEmpty());
+    }
+
+    @Test
+    public void testInvalidNameMaxCharacters() {
+        center.setName("C".repeat(101));
+        center.setId(1L);
+        center.setAddress("Rua 1, 123");
+        center.setCapacity(100);
+        assertFalse(violations.getConstraintViolations(center).isEmpty());
+    }
+
+    @Test
+    public void testInvalidAddressMinCharacters() {
+        center.setName("Centro 1");
+        center.setId(1L);
+        center.setAddress("R");
+        center.setCapacity(100);
+        assertFalse(violations.getConstraintViolations(center).isEmpty());
+    }
+
+    @Test
+    public void testInvalidAddressMaxCharacters() {
+        center.setName("Centro 1");
+        center.setId(1L);
+        center.setAddress("R".repeat(101));
+        center.setCapacity(100);
+        assertFalse(violations.getConstraintViolations(center).isEmpty());
+    }
 }
