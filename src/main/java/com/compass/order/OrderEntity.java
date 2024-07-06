@@ -4,9 +4,13 @@ import com.compass.item.ItemEntity;
 import com.compass.order.enums.StatusOrder;
 import com.compass.shelter.ShelterEntity;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -16,6 +20,8 @@ import java.util.Objects;
 @Entity
 @Table(name = "TB_ORDERS")
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class OrderEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -26,6 +32,7 @@ public class OrderEntity implements Serializable {
     @Temporal(TemporalType.DATE)
     @Column(nullable = false)
     @NotNull(message = "Data do pedido é obrigatória")
+    @PastOrPresent(message = "Data do pedido deve ser no passado ou presente")
     private Date date;
 
     @Enumerated(EnumType.STRING)
