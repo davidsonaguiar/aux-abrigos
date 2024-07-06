@@ -3,7 +3,9 @@ package com.compass.shelter;
 import com.compass.item.ItemEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.List;
@@ -12,6 +14,8 @@ import java.util.Objects;
 @Entity
 @Table(name = "TB_SHELTERS")
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class ShelterEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -35,6 +39,7 @@ public class ShelterEntity implements Serializable {
     private String phone;
 
     @Column(nullable = false)
+    @NotBlank(message = "E-mail do abrigo é obrigatório")
     @Email(message = "E-mail do abrigo inválido")
     private String email;
 
