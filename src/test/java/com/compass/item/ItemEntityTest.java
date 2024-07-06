@@ -18,117 +18,113 @@ public class ItemEntityTest {
 
     @BeforeEach
     public void setUp() {
-        item = new ItemEntity();
+        item = new ItemEntity(1L, "Arroz", TypeItem.ALIMENTO, SizeItem.P, SexItem.MASCULINO, 10, new CenterEntity(), new ShelterEntity());
         violations = new UtilConstraintViolation<>();
     }
 
+    // Test Getters e Setters
     @Test
-    public void testValid() {
-        item.setId(1L);
-        item.setName("Camiseta");
-        item.setType(TypeItem.ROUPA);
-        item.setSize(SizeItem.P);
-        item.setSex(SexItem.MASCULINO);
-        item.setQuantity(10);
-        item.setCenter(new CenterEntity());
-        assertTrue(violations.getConstraintViolations(item).isEmpty());
+    public void testGetters() {
+        assertTrue(item.getId() == 1L);
+        assertTrue(item.getName().equals("Arroz"));
+        assertTrue(item.getType().equals(TypeItem.ALIMENTO));
+        assertTrue(item.getSize().equals(SizeItem.P));
+        assertTrue(item.getSex().equals(SexItem.MASCULINO));
+        assertTrue(item.getQuantity() == 10);
+        assertTrue(item.getCenter().equals(new CenterEntity()));
+        assertTrue(item.getShelter().equals(new ShelterEntity()));
     }
 
     @Test
-    public void testInvalidNameEmpty() {
-        item.setId(1L);
-        item.setName("");
+    public void testSetters() {
+        item.setId(2L);
+        item.setName("Feijão");
         item.setType(TypeItem.ALIMENTO);
-        item.setQuantity(10);
+        item.setSize(SizeItem.M);
+        item.setSex(SexItem.FEMININO);
+        item.setQuantity(20);
         item.setCenter(new CenterEntity());
+        item.setShelter(new ShelterEntity());
+
+        assertTrue(item.getId() == 2L);
+        assertTrue(item.getName().equals("Feijão"));
+        assertTrue(item.getType().equals(TypeItem.ALIMENTO));
+        assertTrue(item.getSize().equals(SizeItem.M));
+        assertTrue(item.getSex().equals(SexItem.FEMININO));
+        assertTrue(item.getQuantity() == 20);
+        assertTrue(item.getCenter().equals(new CenterEntity()));
+        assertTrue(item.getShelter().equals(new ShelterEntity()));
+    }
+
+    // Test Name
+    @Test
+    public void testNameEmpty() {
+        item.setName("");
         assertFalse(violations.getConstraintViolations(item).isEmpty());
     }
 
     @Test
-    public void testInvalidNameMin() {
-        item.setId(1L);
+    public void testNameMin() {
         item.setName("A");
-        item.setType(TypeItem.ALIMENTO);
-        item.setQuantity(10);
-        item.setCenter(new CenterEntity());
         assertTrue(violations.getConstraintViolations(item).size() == 1);
     }
 
     @Test
-    public void testInvalidNameMax() {
-        item.setId(1L);
+    public void testNameMax() {
         item.setName("A".repeat(101));
-        item.setType(TypeItem.ALIMENTO);
-        item.setQuantity(10);
-        item.setCenter(new CenterEntity());
         assertTrue(violations.getConstraintViolations(item).size() == 1);
     }
 
     @Test
-    public void testInvalidNameNull() {
-        item.setId(1L);
+    public void testNameNull() {
         item.setName(null);
-        item.setType(TypeItem.ALIMENTO);
-        item.setQuantity(10);
-        item.setCenter(new CenterEntity());
         assertTrue(violations.getConstraintViolations(item).size() == 1);
     }
 
+    // Test Type
     @Test
-    public void testValidWithoutSizeAndSex() {
-        item.setId(1L);
-        item.setName("Arroz");
-        item.setType(TypeItem.ALIMENTO);
-        item.setQuantity(10);
-        item.setCenter(new CenterEntity());
+    public void testWithoutSizeAndSex() {
+        item.setSize(null);
+        item.setSex(null);
         assertTrue(violations.getConstraintViolations(item).isEmpty());
     }
 
     @Test
-    public void testInvalidTypeItemNull() {
-        item.setId(1L);
-        item.setName("Arroz");
-        item.setQuantity(10);
-        item.setCenter(new CenterEntity());
+    public void testTypeItemNull() {
         item.setType(null);
         assertFalse(violations.getConstraintViolations(item).isEmpty());
     }
 
+    // Test Quantity
     @Test
-    public void testInvalidCenterNull() {
-        item.setId(1L);
-        item.setName("Arroz");
-        item.setType(TypeItem.ALIMENTO);
-        item.setQuantity(10);
-        assertFalse(violations.getConstraintViolations(item).isEmpty());
-    }
-
-    @Test
-    public void testInvalidQuantityMin() {
-        item.setId(1L);
-        item.setName("Arroz");
-        item.setType(TypeItem.ALIMENTO);
+    public void testQuantityMin() {
         item.setQuantity(-1);
-        item.setCenter(new CenterEntity());
         assertFalse(violations.getConstraintViolations(item).isEmpty());
     }
 
     @Test
-    public void testInvalidQuantityNull() {
-        item.setId(1L);
-        item.setName("Arroz");
-        item.setType(TypeItem.ALIMENTO);
-        item.setCenter(new CenterEntity());
+    public void testQuantityNull() {
+        item.setQuantity(null);
         assertFalse(violations.getConstraintViolations(item).isEmpty());
     }
 
     @Test
-    public void testInvalidQuantityZero() {
-        item.setId(1L);
-        item.setName("Arroz");
-        item.setType(TypeItem.ALIMENTO);
+    public void testQuantityZero() {
         item.setQuantity(0);
-        item.setCenter(new CenterEntity());
         assertTrue(violations.getConstraintViolations(item).isEmpty());
+    }
+
+    // Test Shelter
+    @Test
+    public void testShelterNull() {
+        item.setShelter(null);
+        assertTrue(violations.getConstraintViolations(item).isEmpty());
+    }
+
+    // Test Center
+    @Test
+    public void testCenterNull() {
+        item.setCenter(null);
+        assertFalse(violations.getConstraintViolations(item).isEmpty());
     }
 }
