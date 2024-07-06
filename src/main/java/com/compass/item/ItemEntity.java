@@ -7,7 +7,9 @@ import com.compass.item.enums.TypeItem;
 import com.compass.shelter.ShelterEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -15,6 +17,8 @@ import java.util.Objects;
 @Entity
 @Table(name = "TB_ITEMS")
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class ItemEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -33,11 +37,9 @@ public class ItemEntity implements Serializable {
     private TypeItem type;
 
     @Enumerated(EnumType.STRING)
-    @Pattern(regexp = "^(Infantil|PP|P|M|G|GG)$", message = "Tamanho da Roupa deve ser Infantil, PP, P, M, G ou GG")
     private SizeItem size;
 
     @Enumerated(EnumType.STRING)
-    @Pattern(regexp = "^(Masculino|Feminino|Unissex)$", message = "Sexo do item deve ser Masculino, Feminino ou Unissex")
     private SexItem sex;
 
     @Column(nullable = false)
@@ -47,6 +49,7 @@ public class ItemEntity implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "center_id")
+    @NotNull(message = "Centro para qual o item será doado é obrigatório")
     private CenterEntity center;
 
     @ManyToOne
