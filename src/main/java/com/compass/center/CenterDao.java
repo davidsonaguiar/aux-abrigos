@@ -2,6 +2,7 @@ package com.compass.center;
 
 import com.compass.common.dao.GenericDao;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 
 public class CenterDao extends GenericDao<CenterEntity, Long> {
     public CenterDao(EntityManager entityManager, Class<CenterEntity> classEntity) {
