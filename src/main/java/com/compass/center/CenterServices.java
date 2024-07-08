@@ -3,6 +3,7 @@ package com.compass.center;
 import com.compass.common.exception.ContentConflictException;
 import com.compass.common.exception.DaoException;
 import com.compass.common.exception.NotFoundException;
+import com.compass.item.enums.TypeItem;
 import jakarta.persistence.NoResultException;
 import org.hibernate.exception.ConstraintViolationException;
 
@@ -15,15 +16,9 @@ public class CenterServices {
         this.centerDao = centerDao;
     }
 
-    public void capacityIsGreaterThanthousand(CenterEntity centerEntity) {
-        if (centerEntity.getCapacity() < 1000) {
-            throw new IllegalArgumentException("Capacidade mínima do centro é 1000");
-        }
-    }
-
     public CenterEntity save(CenterEntity centerEntity) throws ContentConflictException, DaoException {
         try {
-            capacityIsGreaterThanthousand(centerEntity);
+            centerEntity.setCapacity(1000);
             return centerDao.save(centerEntity);
         }
         catch (ConstraintViolationException exception) {
@@ -60,7 +55,7 @@ public class CenterServices {
 
     public CenterEntity update(CenterEntity centerEntity) throws NotFoundException, ContentConflictException, DaoException {
         try {
-            capacityIsGreaterThanthousand(centerEntity);
+            centerEntity.setCapacity(1000);
             return centerDao.update(centerEntity);
         }
         catch (NoResultException exception) {
@@ -84,5 +79,15 @@ public class CenterServices {
         catch (Exception exception) {
             throw new DaoException("Erro ao deletar centro");
         }
+    }
+
+    public boolean existsCapacityForItemType(Long id, Integer quantity, TypeItem type) {
+        CenterEntity center = centerDao.findById(id);
+        if (center == null) throw new NotFoundException("Centro para doacao não encontrado");
+        Integer quantityType = center.getItems().stream()
+                .filter(item -> item.getType().equals(type))
+                .mapToInt(item -> item.getQuantity())
+                .sum();
+        return (center.getCapacity() - quantityType) >= quantity;
     }
 }
