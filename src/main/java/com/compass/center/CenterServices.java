@@ -15,8 +15,15 @@ public class CenterServices {
         this.centerDao = centerDao;
     }
 
+    public void capacityIsGreaterThanthousand(CenterEntity centerEntity) {
+        if (centerEntity.getCapacity() < 1000) {
+            throw new IllegalArgumentException("Capacidade mínima do centro é 1000");
+        }
+    }
+
     public CenterEntity save(CenterEntity centerEntity) throws ContentConflictException, DaoException {
         try {
+            capacityIsGreaterThanthousand(centerEntity);
             return centerDao.save(centerEntity);
         }
         catch (ConstraintViolationException exception) {
@@ -53,6 +60,7 @@ public class CenterServices {
 
     public CenterEntity update(CenterEntity centerEntity) throws NotFoundException, ContentConflictException, DaoException {
         try {
+            capacityIsGreaterThanthousand(centerEntity);
             return centerDao.update(centerEntity);
         }
         catch (NoResultException exception) {
