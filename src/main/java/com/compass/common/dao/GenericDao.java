@@ -16,54 +16,59 @@ public abstract class GenericDao<Entity, ID> implements DaoProtocol<Entity, ID>{
 
     @Override
     public Entity save(Entity entity) {
-        entityManager.getTransaction().begin();
-        entityManager.persist(entity);
-        entityManager.getTransaction().commit();
-        return entity;
+        try {
+            entityManager.getTransaction().begin();
+            entityManager.persist(entity);
+            entityManager.getTransaction().commit();
+            return entity;
+        }
+        catch (Exception exception) {
+            entityManager.getTransaction().rollback();
+            throw exception;
+        }
     }
 
     @Override
     public Entity findById(ID id) {
-        try {
-            return entityManager.find(classEntity, id);
-        }
-        catch (NoResultException e) {
-            return null;
-        }
-        catch (Exception e) {
-            throw e;
-        }
+        return entityManager.find(classEntity, id);
     }
 
     @Override
     public List<Entity> findAll() {
         String query = "SELECT entity FROM " + classEntity.getSimpleName() + " entity";
+        return entityManager
+                .createQuery(query, classEntity)
+                .getResultList();
+    }
+
+    @Override
+    public Entity update(Entity entity) {
         try {
-            return entityManager
-                    .createQuery(query, classEntity)
-                    .getResultList();
+            entityManager.getTransaction().begin();
+            Entity entityFound = entityManager.find(classEntity, entity);
+            if (entityFound == null) throw new NoResultException("Entity not found");
+            entityManager.merge(entity);
+            entityManager.getTransaction().commit();
+            return entity;
         }
-        catch (NoResultException e) {
-            return List.of();
-        }
-        catch (Exception e) {
-            throw e;
+        catch (Exception exception) {
+            entityManager.getTransaction().rollback();
+            throw exception;
         }
     }
 
     @Override
-    public Entity update(Entity entity) throws NoResultException {
-        entityManager.getTransaction().begin();
-        entityManager.merge(entity);
-        entityManager.getTransaction().commit();
-        return entity;
-    }
-
-    @Override
-    public void deleteById(ID id) throws NoResultException {
-        entityManager.getTransaction().begin();
-        Entity entity = entityManager.find(classEntity, id);
-        entityManager.remove(entity);
-        entityManager.getTransaction().commit();
+    public void deleteById(ID id) {
+        try {
+            entityManager.getTransaction().begin();
+            Entity entityFound = entityManager.find(classEntity, id);
+            if (entityFound == null) throw new NoResultException("Entity not found");
+            entityManager.remove(entityFound);
+            entityManager.getTransaction().commit();
+        }
+        catch (Exception exception) {
+            entityManager.getTransaction().rollback();
+            throw exception;
+        }
     }
 }
