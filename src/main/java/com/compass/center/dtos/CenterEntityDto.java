@@ -1,4 +1,4 @@
-package com.compass.center.dto;
+package com.compass.center.dtos;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;

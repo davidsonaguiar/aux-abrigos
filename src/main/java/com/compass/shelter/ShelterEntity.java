@@ -1,6 +1,6 @@
 package com.compass.shelter;
 
-import com.compass.item.ItemEntity;
+import com.compass.item.entities.ItemEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Objects;
 
 @Entity
 @Table(name = "TB_SHELTERS")

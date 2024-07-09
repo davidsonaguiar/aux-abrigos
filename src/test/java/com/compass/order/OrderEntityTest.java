@@ -1,6 +1,5 @@
 package com.compass.order;
 
-import com.compass.item.ItemEntity;
 import com.compass.order.enums.StatusOrder;
 import com.compass.shelter.ShelterEntity;
 

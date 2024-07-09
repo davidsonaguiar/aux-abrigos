@@ -1,7 +1,6 @@
 package com.compass.donation;
 
 import com.compass.center.CenterEntity;
-import com.compass.item.ItemEntity;
 import com.compass.util.UtilConstraintViolation;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;

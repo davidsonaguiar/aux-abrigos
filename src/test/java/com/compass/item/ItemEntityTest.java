@@ -1,9 +1,9 @@
 package com.compass.item;
 
 import com.compass.center.CenterEntity;
-import com.compass.item.enums.SexItem;
+import com.compass.item.enums.GenderItem;
 import com.compass.item.enums.SizeItem;
-import com.compass.item.enums.TypeItem;
+import com.compass.item.enums.CategoryItem;
 import com.compass.shelter.ShelterEntity;
 import com.compass.util.UtilConstraintViolation;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,7 +18,7 @@ public class ItemEntityTest {
 
     @BeforeEach
     public void setUp() {
-        item = new ItemEntity(1L, "Arroz", TypeItem.ALIMENTO, SizeItem.P, SexItem.MASCULINO, 10, new CenterEntity(), new ShelterEntity());
+        item = new ItemEntity(1L, "Arroz", CategoryItem.ALIMENTO, SizeItem.P, GenderItem.MASCULINO, 10, new CenterEntity(), new ShelterEntity());
         violations = new UtilConstraintViolation<>();
     }
 
@@ -27,9 +27,9 @@ public class ItemEntityTest {
     public void testGetters() {
         assertTrue(item.getId() == 1L);
         assertTrue(item.getName().equals("Arroz"));
-        assertTrue(item.getType().equals(TypeItem.ALIMENTO));
+        assertTrue(item.getType().equals(CategoryItem.ALIMENTO));
         assertTrue(item.getSize().equals(SizeItem.P));
-        assertTrue(item.getSex().equals(SexItem.MASCULINO));
+        assertTrue(item.getSex().equals(GenderItem.MASCULINO));
         assertTrue(item.getQuantity() == 10);
         assertTrue(item.getCenter().equals(new CenterEntity()));
         assertTrue(item.getShelter().equals(new ShelterEntity()));
@@ -39,18 +39,18 @@ public class ItemEntityTest {
     public void testSetters() {
         item.setId(2L);
         item.setName("Feijão");
-        item.setType(TypeItem.ALIMENTO);
+        item.setType(CategoryItem.ALIMENTO);
         item.setSize(SizeItem.M);
-        item.setSex(SexItem.FEMININO);
+        item.setSex(GenderItem.FEMININO);
         item.setQuantity(20);
         item.setCenter(new CenterEntity());
         item.setShelter(new ShelterEntity());
 
         assertTrue(item.getId() == 2L);
         assertTrue(item.getName().equals("Feijão"));
-        assertTrue(item.getType().equals(TypeItem.ALIMENTO));
+        assertTrue(item.getType().equals(CategoryItem.ALIMENTO));
         assertTrue(item.getSize().equals(SizeItem.M));
-        assertTrue(item.getSex().equals(SexItem.FEMININO));
+        assertTrue(item.getSex().equals(GenderItem.FEMININO));
         assertTrue(item.getQuantity() == 20);
         assertTrue(item.getCenter().equals(new CenterEntity()));
         assertTrue(item.getShelter().equals(new ShelterEntity()));

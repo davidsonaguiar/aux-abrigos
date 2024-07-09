@@ -1,10 +1,9 @@
 package com.compass.order;
 
-import com.compass.item.ItemEntity;
+import com.compass.item.entities.ItemEntity;
 import com.compass.order.enums.StatusOrder;
 import com.compass.shelter.ShelterEntity;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
@@ -15,7 +14,6 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 @Entity
 @Table(name = "TB_ORDERS")

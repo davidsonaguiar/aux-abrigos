@@ -3,16 +3,16 @@ package com.compass.center;
 import com.compass.common.exception.ContentConflictException;
 import com.compass.common.exception.DaoException;
 import com.compass.common.exception.NotFoundException;
-import com.compass.item.enums.TypeItem;
+import com.compass.item.enums.CategoryItem;
 import jakarta.persistence.NoResultException;
 import org.hibernate.exception.ConstraintViolationException;
 
 import java.util.List;
 
-public class CenterServices {
+public class CenterService {
     private CenterDao centerDao;
 
-    public CenterServices(CenterDao centerDao) {
+    public CenterService(CenterDao centerDao) {
         this.centerDao = centerDao;
     }
 
@@ -34,7 +34,7 @@ public class CenterServices {
             return centerDao.findById(id);
         }
         catch (NoResultException exception) {
-            return null;
+            throw new NotFoundException("Centro não encontrado");
         }
         catch (Exception exception) {
             throw new DaoException("Erro ao buscar centro");
@@ -81,13 +81,13 @@ public class CenterServices {
         }
     }
 
-    public boolean existsCapacityForItemType(Long id, Integer quantity, TypeItem type) {
+    public CenterEntity existsCapacityForCategoryItem(Long id, Integer quantity, CategoryItem categoryItem) {
         CenterEntity center = centerDao.findById(id);
         if (center == null) throw new NotFoundException("Centro para doacao não encontrado");
         Integer quantityType = center.getItems().stream()
-                .filter(item -> item.getType().equals(type))
+                .filter(item -> item.getCategory().equals(categoryItem) )
                 .mapToInt(item -> item.getQuantity())
                 .sum();
-        return (center.getCapacity() - quantityType) >= quantity;
+        return (center.getCapacity() - quantityType) >= quantity ? center : null;
     }
 }

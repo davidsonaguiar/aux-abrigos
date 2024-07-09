@@ -1,6 +1,6 @@
 package com.compass.center;
 
-import com.compass.item.ItemEntity;
+import com.compass.item.entities.ItemEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -10,7 +10,6 @@ import lombok.*;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Objects;
 
 @Entity
 @Table(name = "TB_CENTERS")
