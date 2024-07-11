@@ -58,6 +58,7 @@ public class RegisterDonationUI {
             for(int i = 0; i < categories.size(); i++) {
                 System.out.println(i + 1 + " - " + categories.get(i).getCategory());
             }
+
             System.out.println("0 - Sair");
 
             System.out.println("Digite o número da categoria desejada: ");
@@ -68,29 +69,33 @@ public class RegisterDonationUI {
                 categoryOption = null;
             }
 
-            if (categoryOption == 0) return null;
+            if (categoryOption == 0) {
+                if(itemsInList.isEmpty()) {
+                    System.out.println("Nenhum item foi adicionado à doação");
+                    String text = "Deseja continuar adicionando item?";
+                    boolean continueAddingItem = confirmation(text, scanner);
+                    if(!continueAddingItem) return null;
+                    else categoryOption = null;
+                }
+            }
         }
 
-        CategoryItem category = categories.get(categoryOption - 1);
-
-        Integer quantityItemInCenter = center.getAvailableCapacityForCategory(category);
-        Integer quantityItemTypeInList = itemsInList.stream().filter(itemInList -> itemInList.getCategory().equals(category)).mapToInt(ItemEntity::getQuantity).sum();
-        Integer availableCapacityForCategory = quantityItemInCenter - quantityItemTypeInList;
-
-        if(availableCapacityForCategory == 0) {
-            System.out.println("Capacidade disponível para essa categoria de item esgotada");
-            System.out.printf("No centro há apenas uma capacidade de %s %s e você já adicionou nessa doação mais %s.\n", quantityItemInCenter, category.getCategory(), quantityItemTypeInList);
-            return null;
-        }
-
-        String moreThanOne = availableCapacityForCategory > 1 ? "S" : "";
-        System.out.printf("Quantidade de %s%s que ainda podem ser adicionada nessa lista de doação: %s.\n", category.getCategory(), moreThanOne, availableCapacityForCategory);
-
-        return category;
+        return categories.get(categoryOption - 1);
     }
 
-    private static ItemEntity createItem(CategoryItem category, CenterEntity center, Scanner scanner) {
+    private static ItemEntity createItem(Integer quantityItemTypeInList, CategoryItem category, CenterEntity center, Scanner scanner) {
         try {
+
+            Integer quantityItemInCenter = center.getAvailableCapacityForCategory(category);
+            Integer availableCapacityForCategory = quantityItemInCenter - quantityItemTypeInList;
+
+            if(availableCapacityForCategory == 0) {
+                System.out.println("Capacidade disponível para essa categoria de item esgotada");
+                String text = "No centro há apenas uma capacidade de %s %s e você já adicionou nessa doação mais %s.\n";
+                System.out.printf(text, quantityItemInCenter, category.getCategory(), quantityItemTypeInList);
+                return null;
+            }
+
             ItemEntity item = new ItemEntity();
             item.setCategory(category);
             item.setCenter(center);
@@ -102,10 +107,15 @@ public class RegisterDonationUI {
             String description = stringField(scanner, label, textInfo, 3, msgMin, 100, msgMax);
             item.setDescription(description);
 
+            String moreThanOne = availableCapacityForCategory > 1 ? "S" : "";
+            String text = "Quantidade de %s%s que ainda podem ser adicionada nessa lista de doação: %s.\n";
+            System.out.printf(text, category.getCategory(), moreThanOne, availableCapacityForCategory);
+
             label = "Digite a quantidade do item: ";
-            textInfo = "A quantidade do item deve ser maior ou igual a 1!";
+            textInfo = "A quantidade do item deve ser maior que 0 e menor ou igual a " + availableCapacityForCategory + "!";
             msgMin = "Valor informado é menor que o mínimo!";
-            Integer quantity = intField(scanner, label, textInfo, 1, msgMin,null, null);
+            msgMax = "Valor informado é maior (" + availableCapacityForCategory + ") que a capacidade disponível para essa categoria de item!";
+            Integer quantity = intField(scanner, label, textInfo, 1, msgMin, availableCapacityForCategory, msgMax);
             item.setQuantity(quantity);
 
             createSpecificsItem(item, scanner);
@@ -163,7 +173,7 @@ public class RegisterDonationUI {
             System.out.println(donation.itemsListIsEmpty() ? "Adicionar item à doação" : "Adicionar outro item à doação");
             CategoryItem category = selectCategory(donation.getItems(), donation.getCenter(), scanner);
             if(category == null) break;
-            ItemEntity item = createItem(category, donation.getCenter(), scanner);
+            ItemEntity item = createItem(donation.getQuantityItemsByCategory(category), category, donation.getCenter(), scanner);
             donation.addItem(item);
             System.out.println("Item adicionado à doação");
             boolean continueAdding = confirmation("Deseja adicionar outro item à doação?", scanner);
@@ -176,6 +186,10 @@ public class RegisterDonationUI {
     }
 
     public static void listAllItemsOfDonation(DonationEntity donation) {
+        if(donation.getItems().isEmpty()) {
+            System.out.println("Nenhum item foi adicionado à doação");
+            return;
+        }
         System.out.println("Itens da doação");
         for(ItemEntity item : donation.getItems()) {
             System.out.println("-".repeat(50));

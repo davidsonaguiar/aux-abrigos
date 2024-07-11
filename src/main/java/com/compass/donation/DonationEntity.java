@@ -2,6 +2,7 @@ package com.compass.donation;
 
 import com.compass.center.CenterEntity;
 import com.compass.item.ItemEntity;
+import com.compass.item.enums.CategoryItem;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
@@ -48,5 +49,12 @@ public class DonationEntity implements Serializable {
     public boolean itemsListIsEmpty() {
         if(items == null) return true;
         return items.isEmpty();
+    }
+
+    public Integer getQuantityItemsByCategory(CategoryItem category) {
+        return items.stream()
+                .filter(item -> item.getCategory().equals(category))
+                .mapToInt(ItemEntity::getQuantity)
+                .sum();
     }
 }

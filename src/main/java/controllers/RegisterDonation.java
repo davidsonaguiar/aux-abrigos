@@ -2,6 +2,7 @@ package controllers;
 
 import com.compass.center.CenterEntity;
 import com.compass.center.CenterService;
+import com.compass.common.exception.DaoException;
 import com.compass.donation.DonationEntity;
 import com.compass.donation.DonationService;
 import com.compass.item.ItemEntity;
@@ -34,12 +35,23 @@ public class RegisterDonation {
             System.out.println("Não há centros cadastrados");
             return;
         }
+
         donation.setCenter(center);
         donation.setDate(LocalDate.now());
         donation.setItems(new ArrayList<>());
-        createDonationItems(donation, scanner);
 
-        donationService.save(donation);
-        System.out.println("Doação registrada com sucesso");
+        createDonationItems(donation, scanner);
+        if(donation.getItems().isEmpty()) {
+            System.out.println("Doação cancelada");
+            return;
+        }
+
+        try {
+            donationService.save(donation);
+            System.out.println("Doação registrada com sucesso");
+        }
+        catch (DaoException exception) {
+            System.out.println("Erro ao tentar salver doação: " + exception.getMessage());
+        }
     }
 }

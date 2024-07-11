@@ -11,6 +11,7 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -71,12 +72,8 @@ public class CenterEntity implements Serializable {
     }
 
     public List<CategoryItem> getCategoriesAvailableCapacity() {
-        List<CategoryItem> categoryItems = List.of(CategoryItem.values());
-        for(CategoryItem categoryItem : categoryItems) {
-            if(!existsCapacityForCategoryItem(categoryItem)) {
-                categoryItems.remove(categoryItem);
-            }
-        }
+        List<CategoryItem> categoryItems = new ArrayList<>(List.of(CategoryItem.values()));
+        categoryItems.removeIf(categoryItem -> !existsCapacityForCategoryItem(categoryItem));
         return categoryItems;
     }
 }
