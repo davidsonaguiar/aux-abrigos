@@ -31,7 +31,7 @@ public class RegisterDonationUI {
             }
             System.out.println("0 - Para cancelar operação");
 
-            System.out.println("Digite o número do centro desejado: ");
+            System.out.print("Digite o número do centro desejado: ");
             centerOption = scanner.nextInt();
 
             if(centerOption < 0 || centerOption > centers.size()) {
@@ -138,8 +138,9 @@ public class RegisterDonationUI {
     }
 
     private static void createFoodItem(ItemEntity item, Scanner scanner) throws OperationCancelledException {
-        System.out.println("Digite a data de validade do item: ");
-        item.setExpirationDate(LocalDate.parse(scanner.next()));
+        String label = "Digite a data de validade do item (dd/MM/yyyy): ";
+        LocalDate expirationDate = dateField(scanner, label,false,false, true);
+        item.setExpirationDate(expirationDate);
 
         UnitItem unit = selectOption(UnitItem.class, scanner, "Unidades disponíveis");
         item.setUnit(unit);

@@ -10,6 +10,7 @@ import com.compass.item.ItemEntity;
 import com.compass.item.ItemService;
 import com.compass.item.enums.*;
 import ui.RegisterDonationUI;
+import ui.exceptions.OperationCancelledException;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -59,6 +60,9 @@ public class RegisterDonation {
             else {
                 System.out.println("Doação Cancelada!");
             }
+        }
+        catch (OperationCancelledException exception) {
+            System.out.println(exception.getMessage());
         }
         catch (NotFoundException exception) {
             System.out.println(exception.getMessage());

@@ -10,6 +10,7 @@ import controllers.RegisterDonation;
 import com.compass.db.DatabaseConnectionException;
 import com.compass.db.JpaConnector;
 import jakarta.persistence.EntityManager;
+import ui.Menu;
 
 import java.util.Scanner;
 
@@ -29,7 +30,9 @@ public class Main {
             DonationService donationService = new DonationService(donationDao);
 
             RegisterDonation registerDonation = new RegisterDonation(centerService, donationService, scanner);
-            registerDonation.execute();
+
+            Menu menu = new Menu(scanner, registerDonation);
+            menu.execute();
         }
         catch (DatabaseConnectionException exception) {
             exception.printStackTrace();
