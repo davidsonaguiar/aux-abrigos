@@ -1,10 +1,12 @@
 package ui;
 
 import com.compass.center.CenterEntity;
+import com.compass.common.exception.NotFoundException;
 import com.compass.donation.DonationEntity;
 import com.compass.item.ItemEntity;
 import com.compass.item.enums.*;
-import controllers.exceptions.ItemCreationCancelledException;
+import ui.exceptions.NoCapacityException;
+import ui.exceptions.OperationCancelledException;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -14,10 +16,11 @@ import java.util.function.Supplier;
 import static ui.Component.*;
 
 public class RegisterDonationUI {
-    public static CenterEntity selectCenter(Supplier<List<CenterEntity>> centerSupplier, Scanner scanner) {
+    public static CenterEntity selectCenter(Supplier<List<CenterEntity>> centerSupplier, Scanner scanner)  throws OperationCancelledException, NotFoundException {
         List<CenterEntity> centers = centerSupplier.get();
-        if(centers.isEmpty()) return null;
+        if(centers.isEmpty()) throw new NotFoundException("Não há centro cadastrado no sistema");
 
+        System.out.println();
         System.out.println("Centros disponíveis");
 
         Integer centerOption = null;
@@ -26,74 +29,62 @@ public class RegisterDonationUI {
             for(int i = 0; i < centers.size(); i++) {
                 System.out.println(i + 1 + " - " + centers.get(i).getName());
             }
-            System.out.println("0 - Sair");
+            System.out.println("0 - Para cancelar operação");
 
             System.out.println("Digite o número do centro desejado: ");
             centerOption = scanner.nextInt();
 
             if(centerOption < 0 || centerOption > centers.size()) {
+                System.out.println();
                 System.out.println("Opção inválida");
+                System.out.println();
                 centerOption = null;
             }
 
-            if (centerOption == 0) return null;
+            if (centerOption == 0) throw new OperationCancelledException("Operação cancelada pelo usuário.");
         }
 
         return centers.get(centerOption - 1);
     }
 
-    public static CategoryItem selectCategory(List<ItemEntity> itemsInList, CenterEntity center, Scanner scanner) {
-        List<CategoryItem> categories = center.getCategoriesAvailableCapacity();
+    public static void createDonationItems(DonationEntity donation, Scanner scanner) throws OperationCancelledException {
+        while(true) {
+            System.out.println();
+            System.out.printf("Adicionar o %s item na lista de doação: ", donation.getItems().size() + 1);
 
-        if(categories.isEmpty()) {
-            System.out.println("Capacidade disponível para todas as categorias esgotada");
-            return null;
-        }
+            try {
+                CategoryItem category = selectOption(CategoryItem.class, scanner, "Categorias disponíveis: ");;
+                ItemEntity item = createItem(donation.getQuantityItemsByCategory(category), category, donation.getCenter(), scanner);
+                donation.addItem(item);
 
-        System.out.println("Categorias disponíveis");
+                System.out.println();
+                System.out.println("Item adicionado com sucesso!");
 
-        Integer categoryOption = null;
-
-        while(categoryOption == null) {
-            for(int i = 0; i < categories.size(); i++) {
-                System.out.println(i + 1 + " - " + categories.get(i).getCategory());
+                Boolean shouldContinueAddingItems = confirmation("Deseja continuar adicionando itens para essa doação", scanner);
+                if(!shouldContinueAddingItems) return;
             }
-
-            System.out.println("0 - Sair");
-
-            System.out.println("Digite o número da categoria desejada: ");
-            categoryOption = scanner.nextInt();
-
-            if(categoryOption < 0 || categoryOption > categories.size()) {
-                System.out.println("Opção inválida");
-                categoryOption = null;
+            catch (OperationCancelledException exception) {
+                System.out.println("Operação cancelada!");
+                Boolean shouldContinueAddingItems = confirmation("Deseja continuar adicionando itens para essa doação", scanner);
+                if(!shouldContinueAddingItems) return;
             }
-
-            if (categoryOption == 0) {
-                if(itemsInList.isEmpty()) {
-                    System.out.println("Nenhum item foi adicionado à doação");
-                    String text = "Deseja continuar adicionando item?";
-                    boolean continueAddingItem = confirmation(text, scanner);
-                    if(!continueAddingItem) return null;
-                    else categoryOption = null;
-                }
+            catch (NoCapacityException exception) {
+                System.out.println(exception.getMessage());
+                System.out.println("Você poderá criar uma nova doação para outro centro!");
+                Boolean shouldContinueAddingItems = confirmation("Deseja continuar adicionando itens para essa doação?", scanner);
+                if(!shouldContinueAddingItems) return;
             }
         }
-
-        return categories.get(categoryOption - 1);
     }
 
-    private static ItemEntity createItem(Integer quantityItemTypeInList, CategoryItem category, CenterEntity center, Scanner scanner) {
+    private static ItemEntity createItem(Integer quantityItemTypeInList, CategoryItem category, CenterEntity center, Scanner scanner) throws NoCapacityException, OperationCancelledException {
         try {
-
             Integer quantityItemInCenter = center.getAvailableCapacityForCategory(category);
             Integer availableCapacityForCategory = quantityItemInCenter - quantityItemTypeInList;
 
             if(availableCapacityForCategory == 0) {
-                System.out.println("Capacidade disponível para essa categoria de item esgotada");
                 String text = "No centro há apenas uma capacidade de %s %s e você já adicionou nessa doação mais %s.\n";
-                System.out.printf(text, quantityItemInCenter, category.getCategory(), quantityItemTypeInList);
-                return null;
+                throw new NoCapacityException(String.format(text, quantityItemInCenter, category.getCategory(), quantityItemTypeInList));
             }
 
             ItemEntity item = new ItemEntity();
@@ -107,8 +98,9 @@ public class RegisterDonationUI {
             String description = stringField(scanner, label, textInfo, 3, msgMin, 100, msgMax);
             item.setDescription(description);
 
+            System.out.println();
             String moreThanOne = availableCapacityForCategory > 1 ? "S" : "";
-            String text = "Quantidade de %s%s que ainda podem ser adicionada nessa lista de doação: %s.\n";
+            String text = "**Quantidade de %s%s que ainda podem ser adicionada nessa lista de doação: %s.**\n";
             System.out.printf(text, category.getCategory(), moreThanOne, availableCapacityForCategory);
 
             label = "Digite a quantidade do item: ";
@@ -122,40 +114,12 @@ public class RegisterDonationUI {
 
             return item;
         }
-        catch (ItemCreationCancelledException e) {
-            System.out.println("Criação do item cancelada");
-            return null;
+        catch (NoCapacityException exception) {
+            throw exception;
         }
-        catch (Exception e) {
-            System.out.println("Erro ao criar item: " + e.getMessage());
-            return null;
+        catch (OperationCancelledException exception) {
+            throw exception;
         }
-
-    }
-
-    private static void createHygieneItem(ItemEntity item, Scanner scanner) {
-        HygieneTypeItem hygieneType = selectOption(HygieneTypeItem.class, scanner, "Tipos de higiene disponíveis");
-        if(hygieneType == null) throw new ItemCreationCancelledException();
-        item.setHygieneType(hygieneType);
-    }
-
-    private static void createFoodItem(ItemEntity item, Scanner scanner) {
-        System.out.println("Digite a data de validade do item: ");
-        item.setExpirationDate(LocalDate.parse(scanner.next()));
-
-        UnitItem unit = selectOption(UnitItem.class, scanner, "Unidades disponíveis");
-        if(unit == null) throw new ItemCreationCancelledException();
-        item.setUnit(unit);
-    }
-
-    private static void createClothingItem(ItemEntity item, Scanner scanner) {
-        SizeItem size = selectOption(SizeItem.class, scanner, "Tamanhos disponíveis");
-        if (size == null) throw new ItemCreationCancelledException();
-        item.setSize(size);
-
-        GenderItem gender = selectOption(GenderItem.class, scanner, "Gêneros disponíveis");
-        if(gender == null) throw new ItemCreationCancelledException();
-        item.setGender(gender);
     }
 
     private static void createSpecificsItem(ItemEntity item, Scanner scanner) {
@@ -168,21 +132,25 @@ public class RegisterDonationUI {
         }
     }
 
-    public static void createDonationItems(DonationEntity donation, Scanner scanner) {
-        do {
-            System.out.println(donation.itemsListIsEmpty() ? "Adicionar item à doação" : "Adicionar outro item à doação");
-            CategoryItem category = selectCategory(donation.getItems(), donation.getCenter(), scanner);
-            if(category == null) break;
-            ItemEntity item = createItem(donation.getQuantityItemsByCategory(category), category, donation.getCenter(), scanner);
-            donation.addItem(item);
-            System.out.println("Item adicionado à doação");
-            boolean continueAdding = confirmation("Deseja adicionar outro item à doação?", scanner);
-            if(!continueAdding) {
-                listAllItemsOfDonation(donation);
-                boolean donationConfirmed = confirmation("Deseja confirmar a doação?", scanner);
-                if(donationConfirmed) break;
-            }
-        } while(true);
+    private static void createHygieneItem(ItemEntity item, Scanner scanner) throws OperationCancelledException {
+        HygieneTypeItem hygieneType = selectOption(HygieneTypeItem.class, scanner, "Tipos de higiene disponíveis");
+        item.setHygieneType(hygieneType);
+    }
+
+    private static void createFoodItem(ItemEntity item, Scanner scanner) throws OperationCancelledException {
+        System.out.println("Digite a data de validade do item: ");
+        item.setExpirationDate(LocalDate.parse(scanner.next()));
+
+        UnitItem unit = selectOption(UnitItem.class, scanner, "Unidades disponíveis");
+        item.setUnit(unit);
+    }
+
+    private static void createClothingItem(ItemEntity item, Scanner scanner) throws OperationCancelledException {
+        SizeItem size = selectOption(SizeItem.class, scanner, "Tamanhos disponíveis");
+        item.setSize(size);
+
+        GenderItem gender = selectOption(GenderItem.class, scanner, "Gêneros disponíveis");
+        item.setGender(gender);
     }
 
     public static void listAllItemsOfDonation(DonationEntity donation) {
@@ -193,24 +161,20 @@ public class RegisterDonationUI {
         System.out.println("Itens da doação");
         for(ItemEntity item : donation.getItems()) {
             System.out.println("-".repeat(50));
-            printItem(item);
+            System.out.println("Item");
+            System.out.println("Categoria: " + item.getCategory().getCategory());
+            System.out.println("Descrição: " + item.getDescription());
+            System.out.println("Quantidade: " + item.getQuantity());
+            if(item.getCategory() == CategoryItem.HIGIENE) {
+                System.out.println("Tipo de higiene: " + item.getHygieneType().getType());
+            } else if(item.getCategory() == CategoryItem.ALIMENTO) {
+                System.out.println("Data de validade: " + item.getExpirationDate());
+                System.out.println("Unidade: " + item.getUnit().getUnit());
+            } else if(item.getCategory() == CategoryItem.ROUPA) {
+                System.out.println("Tamanho: " + item.getSize().getSize());
+                System.out.println("Gênero: " + item.getGender().getGender());
+            }
         }
         System.out.println("-".repeat(50));
-    }
-
-    private static void printItem(ItemEntity item) {
-        System.out.println("Item");
-        System.out.println("Categoria: " + item.getCategory().getCategory());
-        System.out.println("Descrição: " + item.getDescription());
-        System.out.println("Quantidade: " + item.getQuantity());
-        if(item.getCategory() == CategoryItem.HIGIENE) {
-            System.out.println("Tipo de higiene: " + item.getHygieneType().getType());
-        } else if(item.getCategory() == CategoryItem.ALIMENTO) {
-            System.out.println("Data de validade: " + item.getExpirationDate());
-            System.out.println("Unidade: " + item.getUnit().getUnit());
-        } else if(item.getCategory() == CategoryItem.ROUPA) {
-            System.out.println("Tamanho: " + item.getSize().getSize());
-            System.out.println("Gênero: " + item.getGender().getGender());
-        }
     }
 }
