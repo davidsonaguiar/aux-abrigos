@@ -4,13 +4,11 @@ import com.compass.center.CenterEntity;
 import com.compass.item.enums.GenderItem;
 import com.compass.item.enums.SizeItem;
 import com.compass.item.enums.CategoryItem;
-import com.compass.item.enums.Unit;
+import com.compass.item.enums.UnitItem;
 import com.compass.shelter.ShelterEntity;
 import com.compass.util.UtilConstraintViolation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -27,7 +25,7 @@ public class ItemEntityTest {
         item.setDescription("Arroz");
         item.setCategory(CategoryItem.ALIMENTO);
         item.setQuantity(15);
-        item.setUnit(Unit.QUILOGRAMA);
+        item.setUnit(UnitItem.QUILOGRAMA);
         item.setCenter(new CenterEntity());
 
         violations = new UtilConstraintViolation<>();

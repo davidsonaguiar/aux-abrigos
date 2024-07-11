@@ -40,4 +40,13 @@ public class DonationEntity implements Serializable {
     @JoinColumn(name = "donation_id")
     @NotNull(message = "A lista de itens da doação não pode ser vazia ou nula")
     private List<ItemEntity> items;
+
+    public void addItem(ItemEntity item) {
+        items.add(item);
+    }
+
+    public boolean itemsListIsEmpty() {
+        if(items == null) return true;
+        return items.isEmpty();
+    }
 }

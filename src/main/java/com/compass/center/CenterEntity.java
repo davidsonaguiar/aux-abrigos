@@ -51,4 +51,32 @@ public class CenterEntity implements Serializable {
                 .sum();
         return (capacity - quantityType) >= quantity;
     }
+
+    public boolean existsCapacityForCategoryItem(CategoryItem categoryItem) {
+        if(items.isEmpty())  return true;
+        Integer quantityType = items.stream()
+                .filter(item -> item.getCategory().equals(categoryItem) )
+                .mapToInt(item -> item.getQuantity())
+                .sum();
+        return (capacity - quantityType) > 0;
+    }
+
+    public Integer getAvailableCapacityForCategory(CategoryItem categoryItem) {
+        if(items.isEmpty())  return capacity;
+        Integer quantityType = items.stream()
+                .filter(item -> item.getCategory().equals(categoryItem) )
+                .mapToInt(item -> item.getQuantity())
+                .sum();
+        return capacity - quantityType;
+    }
+
+    public List<CategoryItem> getCategoriesAvailableCapacity() {
+        List<CategoryItem> categoryItems = List.of(CategoryItem.values());
+        for(CategoryItem categoryItem : categoryItems) {
+            if(!existsCapacityForCategoryItem(categoryItem)) {
+                categoryItems.remove(categoryItem);
+            }
+        }
+        return categoryItems;
+    }
 }

@@ -1,6 +1,6 @@
 package com.compass.item.enums;
 
-public enum Unit {
+public enum UnitItem {
     UNIDADE("UN"),
     QUILOGRAMA("KG"),
     GRAMA("G"),
@@ -10,7 +10,7 @@ public enum Unit {
 
     private String unit;
 
-    Unit(String unit) {
+    UnitItem(String unit) {
         this.unit = unit;
     }
 
@@ -18,8 +18,8 @@ public enum Unit {
         return unit;
     }
 
-    public static Unit fromString(String text) {
-        for (Unit unit : Unit.values()) {
+    public static UnitItem fromString(String text) {
+        for (UnitItem unit : UnitItem.values()) {
             if (unit.unit.equalsIgnoreCase(text)) {
                 return unit;
             }
