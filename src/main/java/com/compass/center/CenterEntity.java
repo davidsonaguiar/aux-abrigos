@@ -1,6 +1,8 @@
 package com.compass.center;
 
-import com.compass.item.entities.ItemEntity;
+import com.compass.common.exception.NotFoundException;
+import com.compass.item.ItemEntity;
+import com.compass.item.enums.CategoryItem;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -40,4 +42,13 @@ public class CenterEntity implements Serializable {
 
     @OneToMany(mappedBy = "center", cascade = CascadeType.ALL)
     private List<ItemEntity> items;
+
+    public boolean existsCapacityForCategoryItem(Integer quantity, CategoryItem categoryItem) {
+        if(items.isEmpty())  return true;
+        Integer quantityType = items.stream()
+                .filter(item -> item.getCategory().equals(categoryItem) )
+                .mapToInt(item -> item.getQuantity())
+                .sum();
+        return (capacity - quantityType) >= quantity;
+    }
 }

@@ -1,5 +1,6 @@
 package com.compass.shelter;
 
+import com.compass.item.ItemEntity;
 import com.compass.util.UtilConstraintViolation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

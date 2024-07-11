@@ -1,5 +1,6 @@
 package com.compass.center;
 
+import com.compass.item.ItemEntity;
 import com.compass.util.UtilConstraintViolation;
 import org.junit.jupiter.api.*;
 

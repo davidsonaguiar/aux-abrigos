@@ -34,7 +34,7 @@ public class CenterService {
             return centerDao.findById(id);
         }
         catch (NoResultException exception) {
-            throw new NotFoundException("Centro não encontrado");
+            return null;
         }
         catch (Exception exception) {
             throw new DaoException("Erro ao buscar centro");
@@ -77,17 +77,7 @@ public class CenterService {
             throw new NotFoundException("Centro não encontrado");
         }
         catch (Exception exception) {
-            throw new DaoException("Erro ao deletar centro");
+            throw exception;
         }
-    }
-
-    public CenterEntity existsCapacityForCategoryItem(Long id, Integer quantity, CategoryItem categoryItem) {
-        CenterEntity center = centerDao.findById(id);
-        if (center == null) throw new NotFoundException("Centro para doacao não encontrado");
-        Integer quantityType = center.getItems().stream()
-                .filter(item -> item.getCategory().equals(categoryItem) )
-                .mapToInt(item -> item.getQuantity())
-                .sum();
-        return (center.getCapacity() - quantityType) >= quantity ? center : null;
     }
 }

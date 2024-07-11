@@ -1,6 +1,6 @@
 package com.compass.shelter;
 
-import com.compass.item.entities.ItemEntity;
+import com.compass.item.ItemEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;

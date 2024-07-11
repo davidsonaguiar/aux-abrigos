@@ -1,22 +1,20 @@
-package com.compass.item.entities;
+package com.compass.item;
 
 import com.compass.center.CenterEntity;
-import com.compass.item.enums.CategoryItem;
+import com.compass.item.enums.*;
 import com.compass.shelter.ShelterEntity;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Entity
 @Table(name = "TB_ITEMS")
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "category", discriminatorType = DiscriminatorType.STRING)
 @Data
 @NoArgsConstructor
-public abstract class ItemEntity {
+public class ItemEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -28,9 +26,12 @@ public abstract class ItemEntity {
 
     @Column(nullable = false)
     @NotNull(message = "Quantidade do item é obrigatória")
+    @Min(value = 0, message = "Quantidade do item deve ser maior ou igual a 0")
     private Integer quantity;
 
-    private transient CategoryItem category;
+    @Column(nullable = false)
+    @NotNull(message = "Categoria do item é obrigatória (Roupa, Alimento ou Higiene)")
+    private CategoryItem category;
 
     @ManyToOne
     @JoinColumn(name = "center_id", nullable = false)
@@ -41,14 +42,25 @@ public abstract class ItemEntity {
     @JoinColumn(name = "shelter_id")
     private ShelterEntity shelter;
 
-    public ItemEntity(Long id, String description, Integer quantity) {
+    @Enumerated(EnumType.STRING)
+    private SizeItem size;
+
+    @Enumerated(EnumType.STRING)
+    private GenderItem gender;
+
+    @Temporal(TemporalType.DATE)
+    @Future(message = "Data de validade deve ser no presente ou futuro")
+    private LocalDate expirationDate;
+
+    @Enumerated(EnumType.STRING)
+    private Unit unit;
+
+    @Enumerated(EnumType.STRING)
+    private HygieneTypeItem hygieneType;
+
+    public ItemEntity(Long id, String description, Integer quantity, CategoryItem category, CenterEntity center) {
         this.id = id;
         this.description = description;
         this.quantity = quantity;
-    }
-
-    @PostLoad
-    private void loadCategory() {
-        this.category = CategoryItem.valueOf(this.getClass().getAnnotation(DiscriminatorValue.class).value());
     }
 }

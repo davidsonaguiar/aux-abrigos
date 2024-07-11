@@ -1,6 +1,7 @@
 package com.compass.donation;
 
 import com.compass.center.CenterEntity;
+import com.compass.item.ItemEntity;
 import com.compass.util.UtilConstraintViolation;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -8,13 +9,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
 public class DonationEntityTest {
     private DonationEntity donation;
     private UtilConstraintViolation<DonationEntity> violations;
-    private Date date = new Date();
+    private LocalDate date = LocalDate.now();
 
     @BeforeEach
     public void setUp() {
@@ -33,14 +35,13 @@ public class DonationEntityTest {
 
     @Test
     public void testSetter() {
-        Date date2 = new Date();
         donation.setId(2L);
-        donation.setDate(date2);
+        donation.setDate(LocalDate.now().minusDays(1));
         donation.setCenter(new CenterEntity());
         donation.setItems(List.of(new ItemEntity()));
 
         assertTrue(donation.getId() == 2L);
-        assertTrue(donation.getDate().equals(date2));
+        assertTrue(donation.getDate().equals(LocalDate.now().minusDays(1)));
         assertTrue(donation.getCenter().equals(new CenterEntity()));
         assertTrue(donation.getItems().equals(List.of(new ItemEntity())));
     }
@@ -55,13 +56,13 @@ public class DonationEntityTest {
 
     @Test
     public void testDateFuture() {
-        donation.setDate(new Date(System.currentTimeMillis() + 100000));
+        donation.setDate(LocalDate.now().plusDays(1));
         assertFalse(violations.getConstraintViolations(donation).isEmpty());
     }
 
     @Test
     public void testDatePast() {
-        donation.setDate(new Date(System.currentTimeMillis() - 100000));
+        donation.setDate(LocalDate.now().minusDays(1));
         assertTrue(violations.getConstraintViolations(donation).isEmpty());
     }
 

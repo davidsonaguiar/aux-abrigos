@@ -1,9 +1,10 @@
 package com.compass.item;
 
 import com.compass.common.dao.GenericDao;
-import com.compass.item.entities.ItemEntity;
+import com.compass.common.exception.DaoException;
 import com.compass.item.enums.CategoryItem;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 
 import java.util.List;
 
@@ -13,9 +14,18 @@ public class ItemDao extends GenericDao<ItemEntity, Long> {
     }
 
     public List<ItemEntity> findByCategory(CategoryItem category) {
-        String categoryName = category.getCategory();
-        return entityManager.createNativeQuery("SELECT * FROM TB_ITEMS WHERE category = :category", ItemEntity.class)
-                .setParameter("category", categoryName)
-                .getResultList();
+        try {
+            return entityManager.createQuery("SELECT i FROM ItemEntity i WHERE i.category = :category", ItemEntity.class)
+                    .setParameter("category", category)
+                    .getResultList();
+        }
+        catch (NoResultException exception) {
+            return null;
+        }
+        catch (Exception exception) {
+            throw new DaoException("Erro ao buscar itens por categoria", exception);
+        }
     }
+
+
 }
