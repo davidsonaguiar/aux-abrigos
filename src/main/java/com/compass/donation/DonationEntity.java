@@ -3,7 +3,6 @@ package com.compass.donation;
 import com.compass.center.CenterEntity;
 import com.compass.item.ItemEntity;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 import lombok.AllArgsConstructor;
@@ -11,9 +10,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Objects;
 
 @Entity
 @Table(name = "TB_DONATIONS")
@@ -31,7 +29,7 @@ public class DonationEntity implements Serializable {
     @Column(nullable = false)
     @NotNull(message = "Data da doação é obrigatória")
     @PastOrPresent(message = "Data da doação deve ser a atual")
-    private Date date;
+    private LocalDate date;
 
     @ManyToOne
     @JoinColumn(name = "center_id", nullable = false)
@@ -40,6 +38,6 @@ public class DonationEntity implements Serializable {
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "donation_id")
-    @NotEmpty(message = "A lista de itens da doação não pode ser vazia ou nula")
+    @NotNull(message = "A lista de itens da doação não pode ser vazia ou nula")
     private List<ItemEntity> items;
 }
