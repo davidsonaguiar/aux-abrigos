@@ -31,6 +31,7 @@ public class ItemEntity {
 
     @Column(nullable = false)
     @NotNull(message = "Categoria do item é obrigatória (Roupa, Alimento ou Higiene)")
+    @Enumerated(EnumType.STRING)
     private CategoryItem category;
 
     @ManyToOne
@@ -53,7 +54,7 @@ public class ItemEntity {
     private LocalDate expirationDate;
 
     @Enumerated(EnumType.STRING)
-    private Unit unit;
+    private UnitItem unit;
 
     @Enumerated(EnumType.STRING)
     private HygieneTypeItem hygieneType;

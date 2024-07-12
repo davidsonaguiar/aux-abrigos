@@ -18,6 +18,6 @@ public record ItemDto(
         SizeItem size,
         GenderItem gender,
         LocalDate expirationDate,
-        Unit unit,
+        UnitItem unit,
         HygieneTypeItem hygieneType
 ) {}

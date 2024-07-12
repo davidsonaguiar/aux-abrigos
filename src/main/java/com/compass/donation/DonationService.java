@@ -38,10 +38,7 @@ public class DonationService {
         try {
             return donationDao.save(donation);
         }
-        catch (NotFoundException exception) {
-            throw new NotFoundException(exception.getMessage());
-        }
-        catch (DaoException exception) {
+        catch (Exception exception) {
             throw exception;
         }
     }

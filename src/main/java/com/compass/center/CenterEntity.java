@@ -11,6 +11,7 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -50,5 +51,29 @@ public class CenterEntity implements Serializable {
                 .mapToInt(item -> item.getQuantity())
                 .sum();
         return (capacity - quantityType) >= quantity;
+    }
+
+    public boolean existsCapacityForCategoryItem(CategoryItem categoryItem) {
+        if(items.isEmpty())  return true;
+        Integer quantityType = items.stream()
+                .filter(item -> item.getCategory().equals(categoryItem) )
+                .mapToInt(item -> item.getQuantity())
+                .sum();
+        return (capacity - quantityType) > 0;
+    }
+
+    public Integer getAvailableCapacityForCategory(CategoryItem categoryItem) {
+        if(items.isEmpty())  return capacity;
+        Integer quantityType = items.stream()
+                .filter(item -> item.getCategory().equals(categoryItem) )
+                .mapToInt(item -> item.getQuantity())
+                .sum();
+        return capacity - quantityType;
+    }
+
+    public List<CategoryItem> getCategoriesAvailableCapacity() {
+        List<CategoryItem> categoryItems = new ArrayList<>(List.of(CategoryItem.values()));
+        categoryItems.removeIf(categoryItem -> !existsCapacityForCategoryItem(categoryItem));
+        return categoryItems;
     }
 }

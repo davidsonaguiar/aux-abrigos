@@ -1,8 +1,8 @@
 package com.compass.item.enums;
 
 public enum GenderItem {
-    MASCULINO("M"),
-    FEMININO("F");
+    MASCULINO("MASCULINO"),
+    FEMININO("FEMININO");
 
     private String gender;
 
