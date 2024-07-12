@@ -139,7 +139,8 @@ public class RegisterDonationUI {
 
     private static void createFoodItem(ItemEntity item, Scanner scanner) throws OperationCancelledException {
         String label = "Digite a data de validade do item (dd/MM/yyyy): ";
-        LocalDate expirationDate = dateField(scanner, label,false,false, true);
+        String textInfo = "A data de validade deve ser maior que a data atual!";
+        LocalDate expirationDate = dateField(scanner, label, textInfo,false,false, true);
         item.setExpirationDate(expirationDate);
 
         UnitItem unit = selectOption(UnitItem.class, scanner, "Unidades disponíveis");

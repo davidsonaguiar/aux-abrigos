@@ -6,9 +6,7 @@ import com.compass.item.enums.CategoryItem;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -16,9 +14,9 @@ import java.util.List;
 
 @Entity
 @Table(name = "TB_DONATIONS")
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Data
 public class DonationEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 

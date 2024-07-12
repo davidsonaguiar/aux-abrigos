@@ -2,16 +2,19 @@ package ui;
 
 import com.compass.donation.DonationService;
 import controllers.RegisterDonation;
+import controllers.RegisterDonationByFile;
 
 import java.util.Scanner;
 
 public class Menu {
     private final Scanner scanner;
     private final RegisterDonation registerDonation;
+    private final RegisterDonationByFile registerDonationByFile;
 
-    public Menu(Scanner scanner, RegisterDonation registerDonation) {
+    public Menu(Scanner scanner, RegisterDonation registerDonation, RegisterDonationByFile registerDonationByFile) {
         this.scanner = scanner;
         this.registerDonation = registerDonation;
+        this.registerDonationByFile = registerDonationByFile;
     }
 
     public void execute() {
@@ -44,11 +47,9 @@ public class Menu {
         while (!exit) {
             System.out.println();
             System.out.println("Menu de Doações:");
-            System.out.println("1 - Registrar Doação");
-            System.out.println("2 - Editar Doação");
-            System.out.println("3 - Deletar Doação");
-            System.out.println("4 - Atualizar Doação");
-            System.out.println("0 - Voltar ao Menu Principal");
+            System.out.println("1 - Registrar Doação Manuealmente");
+            System.out.println("2 - Registrar Doação por Arquivo (CSV)");
+
             System.out.print("Escolha uma opção: ");
 
             int option = scanner.nextInt();
@@ -59,13 +60,7 @@ public class Menu {
                     registerDonation();
                     break;
                 case 2:
-                    editDonation();
-                    break;
-                case 3:
-                    deleteDonation();
-                    break;
-                case 4:
-                    updateDonation();
+                    registerDonationByFile();
                     break;
                 case 0:
                     exit = true;
@@ -80,15 +75,7 @@ public class Menu {
         registerDonation.execute();
     }
 
-    private void editDonation() {
-        System.out.println("Editar Doação");
-    }
-
-    private void deleteDonation() {
-        System.out.println("Deletar Doação");
-    }
-
-    private void updateDonation() {
-        System.out.println("Atualizar Doação");
+    private void registerDonationByFile() {
+        registerDonationByFile.execute();
     }
 }

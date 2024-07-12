@@ -9,6 +9,7 @@ import com.compass.donation.DonationService;
 import controllers.RegisterDonation;
 import com.compass.db.DatabaseConnectionException;
 import com.compass.db.JpaConnector;
+import controllers.RegisterDonationByFile;
 import jakarta.persistence.EntityManager;
 import ui.Menu;
 
@@ -30,8 +31,12 @@ public class Main {
             DonationService donationService = new DonationService(donationDao);
 
             RegisterDonation registerDonation = new RegisterDonation(centerService, donationService, scanner);
+            RegisterDonationByFile registerDonationByFile = new RegisterDonationByFile(centerService, donationService, scanner);
 
-            Menu menu = new Menu(scanner, registerDonation);
+            Menu menu = new Menu(
+                    scanner,
+                    registerDonation,
+                    registerDonationByFile);
             menu.execute();
         }
         catch (DatabaseConnectionException exception) {

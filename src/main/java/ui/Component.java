@@ -52,26 +52,40 @@ public class Component {
 
     public static boolean confirmation(String message, Scanner scanner) {
         while (true) {
-            System.out.println();
-            System.out.println(message);
-            System.out.println("1 - Sim");
-            System.out.println("2 - Não");
-            System.out.print("Digite a opção desejada: ");
+            try {
+                System.out.println();
+                System.out.println(message);
+                System.out.println("1 - Sim");
+                System.out.println("2 - Não");
+                System.out.print("Digite a opção desejada: ");
 
-            Integer option = scanner.nextInt();
+                String input;
 
-            System.out.println();
+                if(scanner.hasNext()) {
+                    input = scanner.next().trim();
+                } else {
+                    scanner.nextLine();
+                    continue;
+                }
 
-            switch (option) {
-                case 1:
-                    return true;
-                case 2:
-                    return false;
-                default:
-                    System.out.println("Opção inválida. Por favor, digite 1 para Sim ou 2 para Não.");
+                Integer option = Integer.parseInt(input);
+
+                System.out.println();
+
+                switch (option) {
+                    case 1:
+                        return true;
+                    case 2:
+                        return false;
+                    default:
+                        System.out.println("Opção inválida. Por favor, digite 1 para Sim ou 2 para Não.");
+                }
+            } catch (NumberFormatException exception) {
+                System.out.println("Por favor, digite um número válido.");
             }
         }
     }
+
 
     public static String stringField(Scanner scanner, String label, String textInfo, Integer min, String minErrorMsg, Integer max, String maxErrorMsg) throws OperationCancelledException {
         String input;
@@ -160,18 +174,21 @@ public class Component {
                         System.out.println("Erro: " + String.join(", ", error));
                         error.clear();
                     }
-                } catch (NumberFormatException e) {
+                }
+                catch (NumberFormatException e) {
                     System.out.println("Por favor, digite um número válido.");
                 }
-            } catch (OperationCancelledException e) {
+            }
+            catch (OperationCancelledException e) {
                 throw e;
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 System.out.println("Erro ao ler a entrada. Por favor, tente novamente.");
             }
         }
     }
 
-    public static LocalDate dateField(Scanner scanner, String label, Boolean allowPast, Boolean allowPresent, Boolean allowFuture) {
+    public static LocalDate dateField(Scanner scanner, String label, String textInfo, Boolean allowPast, Boolean allowPresent, Boolean allowFuture) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         LocalDate date;
         List<String> error = new ArrayList<>();
@@ -179,6 +196,7 @@ public class Component {
         while (true) {
             System.out.println();
             System.out.println(label);
+            System.out.println(textInfo);
             System.out.println("Digite '/sair' para cancelar a operação.");
             System.out.print("Digite aqui -> ");
 
@@ -220,9 +238,11 @@ public class Component {
                     System.out.println("Erro: " + String.join(", ", error));
                     error.clear();
                 }
-            } catch (OperationCancelledException exception) {
+            }
+            catch (OperationCancelledException exception) {
                 throw exception;
-            } catch (DateTimeParseException exception) {
+            }
+            catch (DateTimeParseException exception) {
                 System.out.println("Formato de data inválido. Por favor, use o formato (dd/MM/yyyy)");
             }
         }

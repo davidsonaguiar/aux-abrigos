@@ -5,6 +5,7 @@ import com.compass.item.enums.*;
 import com.compass.shelter.ShelterEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -14,6 +15,7 @@ import java.time.LocalDate;
 @Table(name = "TB_ITEMS")
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class ItemEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -58,10 +60,4 @@ public class ItemEntity {
 
     @Enumerated(EnumType.STRING)
     private HygieneTypeItem hygieneType;
-
-    public ItemEntity(Long id, String description, Integer quantity, CategoryItem category, CenterEntity center) {
-        this.id = id;
-        this.description = description;
-        this.quantity = quantity;
-    }
 }

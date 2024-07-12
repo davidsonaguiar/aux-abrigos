@@ -54,8 +54,8 @@ public class RegisterDonation {
             Boolean finish = confirmation("Salvar doação? (Caso não, o processo será cancelado!)", scanner);
 
             if(finish) {
-                donationService.save(donation);
-                System.out.println("Doação registrada com sucesso");
+                DonationEntity donationSaved = donationService.save(donation);
+                System.out.printf("Doação registrada com sucesso - ID: %d\n", donationSaved.getId());
             }
             else {
                 System.out.println("Doação Cancelada!");
