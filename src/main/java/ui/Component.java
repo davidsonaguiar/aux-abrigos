@@ -1,7 +1,13 @@
 package ui;
 
+import com.compass.center.CenterEntity;
+import com.compass.common.exception.NotFoundException;
 import ui.exceptions.OperationCancelledException;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -11,6 +17,36 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Component {
+    public static CenterEntity selectCenter(List<CenterEntity> centers, Scanner scanner)  throws OperationCancelledException, NotFoundException {
+        if(centers.isEmpty()) throw new NotFoundException("Não há centro cadastrado no sistema");
+
+        System.out.println();
+        System.out.println("Centros disponíveis");
+
+        Integer centerOption = null;
+
+        while(centerOption == null) {
+            for(int i = 0; i < centers.size(); i++) {
+                System.out.println(i + 1 + " - " + centers.get(i).getName());
+            }
+            System.out.println("0 - Para cancelar operação");
+
+            System.out.print("Digite o número do centro desejado: ");
+            centerOption = scanner.nextInt();
+
+            if(centerOption < 0 || centerOption > centers.size()) {
+                System.out.println();
+                System.out.println("Opção inválida");
+                System.out.println();
+                centerOption = null;
+            }
+
+            if (centerOption == 0) throw new OperationCancelledException("Operação cancelada pelo usuário.");
+        }
+
+        return centers.get(centerOption - 1);
+    }
+
     public static <E extends Enum<E>> E selectOption(Class<E> enumClass, Scanner scanner, String displayMessage) throws OperationCancelledException {
         E[] enumConstants = enumClass.getEnumConstants();
 
@@ -244,6 +280,56 @@ public class Component {
             }
             catch (DateTimeParseException exception) {
                 System.out.println("Formato de data inválido. Por favor, use o formato (dd/MM/yyyy)");
+            }
+        }
+    }
+
+    public static File fileField(Scanner scanner, String label, String textInfo, String type) throws OperationCancelledException {
+        List<String> error = new ArrayList<>();
+
+        while (true) {
+            System.out.println();
+            System.out.println(label);
+            System.out.println(textInfo);
+            System.out.println("Digite '/sair' para cancelar a operação.");
+            System.out.print("Digite aqui -> ");
+
+            String input;
+
+            if (scanner.hasNext()) {
+                input = scanner.next().trim();
+            } else {
+                scanner.nextLine();
+                continue;
+            }
+
+            try {
+                if (input.equalsIgnoreCase("/sair")) {
+                    throw new OperationCancelledException("Operação cancelada pelo usuário.");
+                }
+
+                Path filePath = Paths.get(input);
+                if (!Files.exists(filePath) || !Files.isRegularFile(filePath)) {
+                    error.add("Arquivo não encontrado");
+                } else {
+                    String fileName = filePath.getFileName().toString();
+                    String fileExtension = fileName.substring(fileName.lastIndexOf('.') + 1);
+
+                    if (!fileExtension.equalsIgnoreCase(type)) {
+                        error.add("Extensão do arquivo incorreta!");
+                    }
+                }
+
+                if (error.isEmpty()) {
+                    return filePath.toFile();
+                } else {
+                    System.out.println("Erro: " + String.join(", ", error));
+                    error.clear();
+                }
+            } catch (OperationCancelledException exception) {
+                throw exception;
+            } catch (Exception exception) {
+                System.out.println("Erro ao ler a entrada. Por favor, tente novamente.");
             }
         }
     }

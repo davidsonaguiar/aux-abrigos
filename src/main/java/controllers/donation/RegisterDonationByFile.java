@@ -1,4 +1,4 @@
-package controllers;
+package controllers.donation;
 
 import com.compass.center.CenterEntity;
 import com.compass.center.CenterService;
@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
 
-import static ui.Component.confirmation;
 import static ui.Component.stringField;
 
 public class RegisterDonationByFile {
@@ -36,12 +35,7 @@ public class RegisterDonationByFile {
     public void execute() {
         try {
             while (true) {
-                String label = "Deseja registrar uma doação por arquivo (CSV)?";
-                Boolean confirmation = confirmation(label, scanner);
-
-                if (!confirmation) break;
-
-                label = "Digite o caminho do arquivo CSV: ";
+                String label = "Digite o caminho do arquivo CSV: ";
                 String textInfo = "Certifique-se de que o arquivo CSV esteja no formato correto";
                 String filePath = stringField(scanner, label, textInfo, null, null, null, null);
                 System.out.println("Arquivo CSV: " + filePath);
@@ -54,45 +48,49 @@ public class RegisterDonationByFile {
                 List<List<String>> records = readCSVFile(filePath);
 
                 for (List<String> record : records) {
+
                     Long centerId = Long.parseLong(record.get(0));
-
-                    CenterEntity center = centerService.findById(centerId);
-
                     String category = record.get(1);
                     String description = record.get(2);
                     Integer quantity = Integer.parseInt(record.get(3));
 
-                    ItemEntity item = new ItemEntity();
+                    CenterEntity center = centerService.findById(centerId);
 
+                    donation.setCenter(center);
+
+                    ItemEntity item = new ItemEntity();
                     item.setCenter(center);
                     item.setDescription(description);
                     item.setQuantity(quantity);
 
                     if(category == "ROUPA") {
-                        item.setCategory(CategoryItem.ROUPA);
                         SizeItem size = SizeItem.valueOf(record.get(4));
                         GenderItem genderItem = GenderItem.valueOf(record.get(5));
 
+                        item.setCategory(CategoryItem.ROUPA);
                         item.setSize(size);
                         item.setGender(genderItem);
+
                         donation.addItem(item);
                     }
 
                     if(category == "ALIMENTO") {
-                        item.setCategory(CategoryItem.ALIMENTO);
                         LocalDate expirationDate = LocalDate.parse(record.get(4), DateTimeFormatter.ofPattern("dd/MM/yyyy", Locale.ENGLISH));
                         UnitItem unit = UnitItem.valueOf(record.get(5));
 
+                        item.setCategory(CategoryItem.ALIMENTO);
                         item.setExpirationDate(expirationDate);
                         item.setUnit(unit);
+
                         donation.addItem(item);
                     }
 
                     if (category == "HIGIENE") {
-                        item.setCategory(CategoryItem.HIGIENE);
                         HygieneTypeItem hygieneType = HygieneTypeItem.valueOf(record.get(4));
 
+                        item.setCategory(CategoryItem.HIGIENE);
                         item.setHygieneType(hygieneType);
+
                         donation.addItem(item);
                     }
 

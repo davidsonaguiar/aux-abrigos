@@ -1,12 +1,12 @@
 package com.compass.item.enums;
 
 public enum UnitItem {
-    UNIDADE("UN"),
-    QUILOGRAMA("KG"),
-    GRAMA("G"),
-    MILIGRAMA("MG"),
-    LITRO("LT"),
-    MILILITRO("ML");
+    UN("UN"),
+    KG("KG"),
+    G("G"),
+    MG("MG"),
+    LT("LT"),
+    ML("ML");
 
     private String unit;
 

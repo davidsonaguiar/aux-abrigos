@@ -1,20 +1,20 @@
 package ui;
 
-import com.compass.donation.DonationService;
-import controllers.RegisterDonation;
-import controllers.RegisterDonationByFile;
+import com.compass.donation.DonationController;
+import controllers.donation.RegisterDonationController;
+import controllers.donation.RegisterDonationByFile;
 
 import java.util.Scanner;
 
 public class Menu {
     private final Scanner scanner;
-    private final RegisterDonation registerDonation;
-    private final RegisterDonationByFile registerDonationByFile;
+    private final DonationController donationController;
+    private final RegisterDonationByFileUI registerDonationByFileUI;
 
-    public Menu(Scanner scanner, RegisterDonation registerDonation, RegisterDonationByFile registerDonationByFile) {
+    public Menu(Scanner scanner, DonationController donationController, RegisterDonationByFileUI registerDonationByFileUI) {
         this.scanner = scanner;
-        this.registerDonation = registerDonation;
-        this.registerDonationByFile = registerDonationByFile;
+        this.donationController = donationController;
+        this.registerDonationByFileUI = registerDonationByFileUI;
     }
 
     public void execute() {
@@ -57,10 +57,10 @@ public class Menu {
 
             switch (option) {
                 case 1:
-                    registerDonation();
+                    System.out.println("Em construcao");
                     break;
                 case 2:
-                    registerDonationByFile();
+                    registerDonationByFileUI.execute();
                     break;
                 case 0:
                     exit = true;
@@ -69,13 +69,5 @@ public class Menu {
                     System.out.println("Opção inválida. Tente novamente.");
             }
         }
-    }
-
-    private void registerDonation() {
-        registerDonation.execute();
-    }
-
-    private void registerDonationByFile() {
-        registerDonationByFile.execute();
     }
 }

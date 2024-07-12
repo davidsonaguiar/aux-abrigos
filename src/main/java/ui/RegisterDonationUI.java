@@ -16,37 +16,6 @@ import java.util.function.Supplier;
 import static ui.Component.*;
 
 public class RegisterDonationUI {
-    public static CenterEntity selectCenter(Supplier<List<CenterEntity>> centerSupplier, Scanner scanner)  throws OperationCancelledException, NotFoundException {
-        List<CenterEntity> centers = centerSupplier.get();
-        if(centers.isEmpty()) throw new NotFoundException("Não há centro cadastrado no sistema");
-
-        System.out.println();
-        System.out.println("Centros disponíveis");
-
-        Integer centerOption = null;
-
-        while(centerOption == null) {
-            for(int i = 0; i < centers.size(); i++) {
-                System.out.println(i + 1 + " - " + centers.get(i).getName());
-            }
-            System.out.println("0 - Para cancelar operação");
-
-            System.out.print("Digite o número do centro desejado: ");
-            centerOption = scanner.nextInt();
-
-            if(centerOption < 0 || centerOption > centers.size()) {
-                System.out.println();
-                System.out.println("Opção inválida");
-                System.out.println();
-                centerOption = null;
-            }
-
-            if (centerOption == 0) throw new OperationCancelledException("Operação cancelada pelo usuário.");
-        }
-
-        return centers.get(centerOption - 1);
-    }
-
     public static void createDonationItems(DonationEntity donation, Scanner scanner) throws OperationCancelledException {
         while(true) {
             System.out.println();

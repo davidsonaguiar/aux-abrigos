@@ -1,17 +1,20 @@
 package com.compass;
 
+import com.compass.center.CenterController;
 import com.compass.center.CenterDao;
 import com.compass.center.CenterEntity;
 import com.compass.center.CenterService;
+import com.compass.donation.DonationController;
 import com.compass.donation.DonationDao;
 import com.compass.donation.DonationEntity;
 import com.compass.donation.DonationService;
-import controllers.RegisterDonation;
+import controllers.donation.RegisterDonationController;
 import com.compass.db.DatabaseConnectionException;
 import com.compass.db.JpaConnector;
-import controllers.RegisterDonationByFile;
+import controllers.donation.RegisterDonationByFile;
 import jakarta.persistence.EntityManager;
 import ui.Menu;
+import ui.RegisterDonationByFileUI;
 
 import java.util.Scanner;
 
@@ -26,17 +29,15 @@ public class Main {
 
             CenterDao centerDao = new CenterDao(entityManager, CenterEntity.class);
             CenterService centerService = new CenterService(centerDao);
+            CenterController centerController = new CenterController(centerService);
 
             DonationDao donationDao = new DonationDao(entityManager, DonationEntity.class);
             DonationService donationService = new DonationService(donationDao);
+            DonationController donationController = new DonationController(donationService);
 
-            RegisterDonation registerDonation = new RegisterDonation(centerService, donationService, scanner);
-            RegisterDonationByFile registerDonationByFile = new RegisterDonationByFile(centerService, donationService, scanner);
+            RegisterDonationByFileUI registerDonationByFileUI = new RegisterDonationByFileUI(centerController, donationController, scanner);
 
-            Menu menu = new Menu(
-                    scanner,
-                    registerDonation,
-                    registerDonationByFile);
+            Menu menu = new Menu(scanner, donationController, registerDonationByFileUI);
             menu.execute();
         }
         catch (DatabaseConnectionException exception) {

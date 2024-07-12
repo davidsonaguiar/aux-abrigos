@@ -1,4 +1,4 @@
-package controllers;
+package controllers.donation;
 
 import com.compass.center.CenterEntity;
 import com.compass.center.CenterService;
@@ -6,10 +6,6 @@ import com.compass.common.exception.DaoException;
 import com.compass.common.exception.NotFoundException;
 import com.compass.donation.DonationEntity;
 import com.compass.donation.DonationService;
-import com.compass.item.ItemEntity;
-import com.compass.item.ItemService;
-import com.compass.item.enums.*;
-import ui.RegisterDonationUI;
 import ui.exceptions.OperationCancelledException;
 
 import java.time.LocalDate;
@@ -18,14 +14,15 @@ import java.util.List;
 import java.util.Scanner;
 
 import static ui.Component.confirmation;
+import static ui.Component.selectCenter;
 import static ui.RegisterDonationUI.*;
 
-public class RegisterDonation {
+public class RegisterDonationController {
     private final CenterService centerService;
     private final DonationService donationService;
     private final Scanner scanner;
 
-    public RegisterDonation(CenterService centerService, DonationService donationService, Scanner scanner) {
+    public RegisterDonationController(CenterService centerService, DonationService donationService, Scanner scanner) {
         this.centerService = centerService;
         this.donationService = donationService;
         this.scanner = scanner;
@@ -34,7 +31,8 @@ public class RegisterDonation {
     public void execute() {
         DonationEntity donation = new DonationEntity();
         try {
-            CenterEntity center = selectCenter(centerService::findAll, scanner);
+            List<CenterEntity> centers = centerService.findAll();
+            CenterEntity center = selectCenter(centers, scanner);
 
             donation.setCenter(center);
             donation.setDate(LocalDate.now());
