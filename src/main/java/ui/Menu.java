@@ -1,43 +1,54 @@
 package ui;
 
 import com.compass.donation.DonationController;
-import controllers.donation.RegisterDonationController;
-import controllers.donation.RegisterDonationByFile;
-
-import java.util.Scanner;
+import ui.donation.*;
+import ui.exceptions.OperationCancelledException;
 
 public class Menu {
-    private final Scanner scanner;
     private final DonationController donationController;
     private final RegisterDonationByFileUI registerDonationByFileUI;
+    private final RegisterDonationUI registerDonationUI;
+    private final ListDonationUI listDonationUI;
+    private final FindDonationUI findDonationUI;
+    private final UpdateDonationUI updateDonationUI;
+    private final Component component;
 
-    public Menu(Scanner scanner, DonationController donationController, RegisterDonationByFileUI registerDonationByFileUI) {
-        this.scanner = scanner;
+    public Menu(Component component, DonationController donationController, RegisterDonationByFileUI registerDonationByFileUI, RegisterDonationUI registerDonationUI, ListDonationUI listDonationUI, FindDonationUI findDonationUI, UpdateDonationUI updateDonationUI) {
+        this.component = component;
         this.donationController = donationController;
         this.registerDonationByFileUI = registerDonationByFileUI;
+        this.registerDonationUI = registerDonationUI;
+        this.listDonationUI = listDonationUI;
+        this.findDonationUI = findDonationUI;
+        this.updateDonationUI = updateDonationUI;
     }
 
     public void execute() {
         boolean exit = false;
         while (!exit) {
-            System.out.println();
-            System.out.println("Menu Principal:");
-            System.out.println("1 - Doações");
-            System.out.println("0 - Sair");
-            System.out.print("Escolha uma opção: ");
+            try {
+                System.out.println();
+                System.out.println("Menu Principal:");
+                System.out.println("1 - Doações");
 
-            int option = scanner.nextInt();
-            scanner.nextLine();
+                String label = "Escollha uma opção:";
+                String textInfo = "Digite um número inteiro entre 1 e 1.";
+                String minError = "Opção inválida. O valor mínimo é 1.";
+                String maxError = "Opção inválida. O valor máximo é 1.";
 
-            switch (option) {
-                case 1:
-                    donationMenu();
-                    break;
-                case 0:
-                    exit = true;
-                    break;
-                default:
-                    System.out.println("Opção inválida. Tente novamente.");
+                int option = component.intField(label, textInfo, 0, minError, 1, maxError);
+
+                switch (option) {
+                    case 1:
+                        donationMenu();
+                        break;
+                    default:
+                        System.out.println("Opção inválida. Tente novamente.");
+                }
+            } catch (OperationCancelledException exception) {
+                System.out.println("Operação cancelada.");
+                Boolean finish = component.confirmation("Deseja sair do sistema?");
+                if (finish) exit = true;
             }
         }
     }
@@ -45,28 +56,48 @@ public class Menu {
     private void donationMenu() {
         boolean exit = false;
         while (!exit) {
-            System.out.println();
-            System.out.println("Menu de Doações:");
-            System.out.println("1 - Registrar Doação Manuealmente");
-            System.out.println("2 - Registrar Doação por Arquivo (CSV)");
+            try {
+                System.out.println();
+                System.out.println("Menu de Doações:");
+                System.out.println("1 - Registrar Doação Manuealmente");
+                System.out.println("2 - Registrar Doação por Arquivo (CSV)");
+                System.out.println("3 - Listar Doações");
+                System.out.println("4 - Procurar Doações");
+                System.out.println("5 - Atualizar Doação");
 
-            System.out.print("Escolha uma opção: ");
+                String label = "Escollha uma opção:";
+                String textInfo = "Digite um número inteiro entre 0 e 5.";
+                String minError = "Opção inválida. O valor mínimo é 0.";
+                String maxError = "Opção inválida. O valor máximo é 5.";
+                int option = component.intField(label, textInfo, 0, minError, 5, maxError);
 
-            int option = scanner.nextInt();
-            scanner.nextLine();
-
-            switch (option) {
-                case 1:
-                    System.out.println("Em construcao");
-                    break;
-                case 2:
-                    registerDonationByFileUI.execute();
-                    break;
-                case 0:
-                    exit = true;
-                    break;
-                default:
-                    System.out.println("Opção inválida. Tente novamente.");
+                switch (option) {
+                    case 1:
+                        registerDonationUI.execute();
+                        break;
+                    case 2:
+                        registerDonationByFileUI.execute();
+                        break;
+                    case 3:
+                        listDonationUI.execute();
+                        break;
+                    case 4:
+                        findDonationUI.execute();
+                        break;
+                    case 5:
+                        updateDonationUI.execute();
+                        break;
+                    case 0:
+                        exit = true;
+                        break;
+                    default:
+                        System.out.println("Opção inválida. Tente novamente.");
+                }
+            }
+            catch (OperationCancelledException exception) {
+                System.out.println("Operação cancelada.");
+                Boolean finish = component.confirmation("Deseja voltar para o menu principal?");
+                return;
             }
         }
     }

@@ -29,15 +29,20 @@ public class CenterService {
         }
     }
 
-    public CenterEntity findById(Long id) throws DaoException {
+    public CenterEntity findById(Long id) throws DaoException, NotFoundException {
         try {
-            return centerDao.findById(id);
+            CenterEntity center = centerDao.findById(id);
+            if (center == null) throw new NotFoundException("Centro não encontrado");
+            return center;
         }
         catch (NoResultException exception) {
-            return null;
+            throw exception;
+        }
+        catch (DaoException exception) {
+            throw exception;
         }
         catch (Exception exception) {
-            throw new DaoException("Erro ao buscar centro");
+            throw exception;
         }
     }
 
@@ -46,10 +51,10 @@ public class CenterService {
             return centerDao.findAll();
         }
         catch (NoResultException exception) {
-            return List.of();
+            throw new NotFoundException("Nenhum centro cadastrado");
         }
         catch (Exception exception) {
-            throw new DaoException("Erro ao buscar centros");
+            throw new DaoException("Erro ao buscar centros no banco de dados");
         }
     }
 

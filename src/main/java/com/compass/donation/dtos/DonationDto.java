@@ -1,5 +1,6 @@
 package com.compass.donation.dtos;
 
+import com.compass.donation.DonationEntity;
 import com.compass.item.dtos.ItemDto;
 import jakarta.persistence.Temporal;
 import jakarta.validation.constraints.NotEmpty;

@@ -1,7 +1,8 @@
 package ui;
 
-import com.compass.center.CenterEntity;
+import com.compass.center.dtos.CenterResponseDto;
 import com.compass.common.exception.NotFoundException;
+import com.compass.item.dtos.ItemDto;
 import ui.exceptions.OperationCancelledException;
 
 import java.io.File;
@@ -17,7 +18,13 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Component {
-    public static CenterEntity selectCenter(List<CenterEntity> centers, Scanner scanner)  throws OperationCancelledException, NotFoundException {
+    private final Scanner scanner;
+
+    public Component(Scanner scanner) {
+        this.scanner = scanner;
+    }
+
+    public CenterResponseDto selectCenter(List<CenterResponseDto> centers)  throws OperationCancelledException {
         if(centers.isEmpty()) throw new NotFoundException("Não há centro cadastrado no sistema");
 
         System.out.println();
@@ -26,28 +33,54 @@ public class Component {
         Integer centerOption = null;
 
         while(centerOption == null) {
-            for(int i = 0; i < centers.size(); i++) {
-                System.out.println(i + 1 + " - " + centers.get(i).getName());
+            try {
+
+                for(int i = 0; i < centers.size(); i++) {
+                    System.out.println(i + 1 + " - " + centers.get(i).name());
+                }
+                System.out.println();
+                System.out.println("Digite '/sair' para cancelar a operação.");
+                System.out.println("Digite o número do centro desejado: ");
+                System.out.print("Digite aqui -> ");
+
+                String input;
+
+                if(scanner.hasNext()) {
+                    input = scanner.next().trim();
+                } else {
+                    scanner.nextLine();
+                    continue;
+                }
+
+                if (input.equalsIgnoreCase("/sair")) {
+                    throw new OperationCancelledException("Operação cancelada pelo usuário.");
+                }
+
+                centerOption = Integer.parseInt(input);
+
+                if(centerOption < 0 || centerOption > centers.size()) {
+                    System.out.println();
+                    System.out.println("Opção inválida");
+                    System.out.println();
+                    centerOption = null;
+                }
+
+                if (centerOption == 0) throw new OperationCancelledException("Operação cancelada pelo usuário.");
             }
-            System.out.println("0 - Para cancelar operação");
-
-            System.out.print("Digite o número do centro desejado: ");
-            centerOption = scanner.nextInt();
-
-            if(centerOption < 0 || centerOption > centers.size()) {
-                System.out.println();
-                System.out.println("Opção inválida");
-                System.out.println();
+            catch (OperationCancelledException exception) {
+                throw exception;
+            }
+            catch (NumberFormatException exception) {
+                System.out.println("Entrada inválida. Por favor, digite um número.");
+                scanner.next();
                 centerOption = null;
             }
-
-            if (centerOption == 0) throw new OperationCancelledException("Operação cancelada pelo usuário.");
         }
 
         return centers.get(centerOption - 1);
     }
 
-    public static <E extends Enum<E>> E selectOption(Class<E> enumClass, Scanner scanner, String displayMessage) throws OperationCancelledException {
+    public <E extends Enum<E>> E selectOption(Class<E> enumClass, String displayMessage) throws OperationCancelledException {
         E[] enumConstants = enumClass.getEnumConstants();
 
         System.out.println();
@@ -61,7 +94,8 @@ public class Component {
             }
             System.out.println("0 - Para cancelar operação");
 
-            System.out.print("Digite o número da opção desejada: ");
+            System.out.println("Digite o número da opção desejada: ");
+            System.out.print("Digite aqui -> ");
 
             try {
                 option = scanner.nextInt();
@@ -86,14 +120,15 @@ public class Component {
         return enumConstants[option - 1];
     }
 
-    public static boolean confirmation(String message, Scanner scanner) {
+    public boolean confirmation(String message) throws NumberFormatException {
         while (true) {
             try {
                 System.out.println();
                 System.out.println(message);
                 System.out.println("1 - Sim");
                 System.out.println("2 - Não");
-                System.out.print("Digite a opção desejada: ");
+                System.out.println("Digite a opção desejada: ");
+                System.out.print("Digite aqui -> ");
 
                 String input;
 
@@ -123,7 +158,7 @@ public class Component {
     }
 
 
-    public static String stringField(Scanner scanner, String label, String textInfo, Integer min, String minErrorMsg, Integer max, String maxErrorMsg) throws OperationCancelledException {
+    public String stringField(String label, String textInfo, Integer min, String minErrorMsg, Integer max, String maxErrorMsg) throws OperationCancelledException {
         String input;
         List<String> error = new ArrayList<>();
 
@@ -171,7 +206,7 @@ public class Component {
         }
     }
 
-    public static Integer intField(Scanner scanner, String label, String textInfo, Integer min, String minErrorMsg, Integer max, String maxErrorMsg) throws OperationCancelledException {
+    public Integer intField(String label, String textInfo, Integer min, String minErrorMsg, Integer max, String maxErrorMsg) throws OperationCancelledException {
         Integer input;
         List<String> error = new ArrayList<>();
 
@@ -224,7 +259,7 @@ public class Component {
         }
     }
 
-    public static LocalDate dateField(Scanner scanner, String label, String textInfo, Boolean allowPast, Boolean allowPresent, Boolean allowFuture) {
+    public LocalDate dateField(String label, String textInfo, Boolean allowPast, Boolean allowPresent, Boolean allowFuture) throws OperationCancelledException {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         LocalDate date;
         List<String> error = new ArrayList<>();
@@ -284,7 +319,7 @@ public class Component {
         }
     }
 
-    public static File fileField(Scanner scanner, String label, String textInfo, String type) throws OperationCancelledException {
+    public File fileField(String label, String textInfo, String type) throws OperationCancelledException {
         List<String> error = new ArrayList<>();
 
         while (true) {
@@ -332,5 +367,61 @@ public class Component {
                 System.out.println("Erro ao ler a entrada. Por favor, tente novamente.");
             }
         }
+    }
+
+    public void printListItem(List<ItemDto> items) {
+        Integer idColLength = 5;
+        Integer descritionColLength = 35;
+        Integer quantityColLength = 10;
+        Integer categoryColLength = 10;
+        Integer sizeColLength = 10;
+        Integer genderColLength = 10;
+        Integer expirationDateColLength = 20;
+        Integer unitColLength = 5;
+        Integer hygieneTypeColLength = 10;
+
+        System.out.println();
+        System.out.println("Itens da doação:");
+        System.out.printf("%s \t %s \t %s \t %s \t %s \t %s \t %s \t %s \t %s\n",
+                padRight("ID", idColLength),
+                padRight("Quantidade", quantityColLength),
+                padRight("Categoria", categoryColLength),
+                padRight("Tamanho", sizeColLength),
+                padRight("Gênero", genderColLength),
+                padRight("Tipo", hygieneTypeColLength),
+                padRight("Data de validade", expirationDateColLength),
+                padRight("Unidade", unitColLength),
+                padRight("Descrição", descritionColLength)
+        );
+
+        items.forEach(item -> {
+            String ifNull = "x";
+            String id = item.id() == null ? ifNull : item.id().toString();
+            String size = item.size() == null ? ifNull : item.size().getSize();
+            String gender = item.gender() == null ? ifNull : item.gender().getGender();
+            String expirationDate = item.expirationDate() == null ? ifNull : item.expirationDate().toString();
+            String quantity = item.quantity() == null ? ifNull : item.quantity().toString();
+            String unit = item.unit() == null ? ifNull : item.unit().name();
+            String hygieneType = item.hygieneType() == null ? ifNull : item.hygieneType().name();
+
+            System.out.printf("%s \t %s \t %s \t %s \t %s \t %s \t %s \t %s \t %s\n",
+                    padRight(id, idColLength),
+                    padRight(quantity, quantityColLength),
+                    padRight(item.category().name(), categoryColLength),
+                    padRight(size, sizeColLength),
+                    padRight(gender, genderColLength),
+                    padRight(hygieneType, hygieneTypeColLength),
+                    padRight(expirationDate, expirationDateColLength),
+                    padRight(unit, unitColLength),
+                    padRight(item.description(), descritionColLength)
+            );
+        });
+    }
+
+    private String padRight(String text, Integer sizeCol) {
+        if(text == null) text = "";
+        if(text.length() > sizeCol)
+            return text.substring(0, sizeCol) + "\t";
+        return text + " ".repeat(sizeCol - text.length()) + "\t";
     }
 }

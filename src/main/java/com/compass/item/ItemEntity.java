@@ -27,11 +27,6 @@ public class ItemEntity {
     private String description;
 
     @Column(nullable = false)
-    @NotNull(message = "Quantidade do item é obrigatória")
-    @Min(value = 0, message = "Quantidade do item deve ser maior ou igual a 0")
-    private Integer quantity;
-
-    @Column(nullable = false)
     @NotNull(message = "Categoria do item é obrigatória (Roupa, Alimento ou Higiene)")
     @Enumerated(EnumType.STRING)
     private CategoryItem category;
@@ -50,6 +45,9 @@ public class ItemEntity {
 
     @Enumerated(EnumType.STRING)
     private GenderItem gender;
+
+    @Min(value = 0, message = "Quantidade do item deve ser maior ou igual a 0")
+    private Integer quantity;
 
     @Temporal(TemporalType.DATE)
     @Future(message = "Data de validade deve ser no presente ou futuro")

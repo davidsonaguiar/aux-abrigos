@@ -4,6 +4,7 @@ import com.compass.center.CenterService;
 import com.compass.common.exception.ContentConflictException;
 import com.compass.common.exception.DaoException;
 import com.compass.common.exception.NotFoundException;
+import com.compass.item.dtos.ItemDto;
 import com.compass.item.enums.CategoryItem;
 import jakarta.persistence.NoResultException;
 
@@ -59,21 +60,36 @@ public class ItemService {
         }
     }
 
-    public ItemEntity update(ItemEntity item) {
+    public ItemEntity update(ItemDto item) {
         try {
-            return itemDao.update(item);
+            ItemEntity itemEntity = itemDao.findById(item.id());
+            if(itemEntity == null) throw new NotFoundException("Item não encontrado");
+
+            itemEntity.setDescription(item.description());
+            itemEntity.setCategory(item.category());
+            itemEntity.setQuantity(item.quantity());
+            itemEntity.setSize(item.size());
+            itemEntity.setGender(item.gender());
+            itemEntity.setUnit(item.unit());
+            itemEntity.setExpirationDate(item.expirationDate());
+            itemEntity.setHygieneType(item.hygieneType());
+
+            return itemDao.update(itemEntity);
         }
-        catch (NoResultException exception) {
-            throw new NotFoundException(exception.getMessage());
+        catch (NotFoundException exception) {
+            throw exception;
         }
         catch (DaoException exception) {
             throw exception;
         }
     }
 
-    public void delete(Long id) {
+    public ItemDto delete(Long id) {
         try {
+            ItemEntity item = itemDao.findById(id);
+            if(item == null) throw new NoResultException("Item não encontrado");
             itemDao.deleteById(id);
+            return ItemDto.fromEntity(item);
         }
         catch (NoResultException exception) {
             throw new NotFoundException(exception.getMessage());

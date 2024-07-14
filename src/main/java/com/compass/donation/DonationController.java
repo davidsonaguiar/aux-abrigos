@@ -1,6 +1,12 @@
 package com.compass.donation;
 
+import com.compass.common.Response;
+import com.compass.common.exception.BadRequestException;
+import com.compass.common.exception.DaoException;
+import com.compass.common.exception.NotFoundException;
+import com.compass.donation.dtos.CreateDonationResponseDto;
 import com.compass.donation.dtos.DonationDto;
+import com.compass.donation.dtos.FindDonationResponseDto;
 
 import java.util.List;
 
@@ -11,8 +17,99 @@ public class DonationController {
         this.donationService = donationService;
     }
 
-    public void saveMany(List<DonationDto> donations) {
-        System.out.println("Donation Controller");
-        donations.forEach(System.out::println);
+    public Response<List<CreateDonationResponseDto>> saveMany(List<DonationDto> donations) {
+        try {
+            List<CreateDonationResponseDto> response = donationService.saveMany(donations);
+            return new Response<>(response, "Doações realizadas com sucesso");
+        }
+        catch (NotFoundException exception) {
+            return new Response<>(null,"Recurso não encontrado: " + exception.getMessage());
+        }
+        catch (BadRequestException exception) {
+            return new Response<>(null, "Dados inválidos: " + exception.getMessage());
+        }
+        catch (DaoException exception) {
+            return new Response<>(null, "Erro ao salvar doações no banco de dados");
+        }
+        catch (Exception exception) {
+            return new Response<>(null, "Erro desconhedico");
+        }
+    }
+
+    public Response<CreateDonationResponseDto> save(DonationDto donation) {
+        try {
+            CreateDonationResponseDto response = donationService.save(donation);
+            return new Response<>(response, "Doação realizada com sucesso");
+        }
+        catch (NotFoundException exception) {
+            return new Response<>(null, "Recurso não encontrado: " + exception.getMessage());
+        }
+        catch (BadRequestException exception) {
+            return new Response<>(null, "Dados inválidos: " + exception.getMessage());
+        }
+        catch (DaoException exception) {
+            exception.printStackTrace();
+            return new Response<>(null, "Erro ao salvar doação no banco de dados");
+        }
+        catch (Exception exception) {
+            return new Response<>(null, "Erro desconhedico");
+        }
+    }
+
+    public Response<List<CreateDonationResponseDto>> listAll() {
+        try {
+            List<CreateDonationResponseDto> response = donationService.findAll();
+            return new Response<>(response, "Doações listadas com sucesso");
+        }
+        catch (NotFoundException exception) {
+            return new Response<>(null, "Recurso não encontrado: " + exception.getMessage());
+        }
+        catch (BadRequestException exception) {
+            return new Response<>(null, "Dados inválidos: " + exception.getMessage());
+        }
+        catch (DaoException exception) {
+            return new Response<>(null, "Erro ao buscar doações no banco de dados");
+        }
+        catch (Exception exception) {
+            return new Response<>(null, "Erro desconhedico");
+        }
+    }
+
+    public Response<FindDonationResponseDto> findById(Long id) {
+        try {
+            FindDonationResponseDto response = donationService.findDonationById(id);
+            return new Response<>(response, "Doação encontrada");
+        }
+        catch (NotFoundException exception) {
+            return new Response<>(null, "Recurso não encontrado: " + exception.getMessage());
+        }
+        catch (BadRequestException exception) {
+            return new Response<>(null, "Dados inválidos: " + exception.getMessage());
+        }
+        catch (DaoException exception) {
+            return new Response<>(null, "Erro ao buscar doação no banco de dados");
+        }
+        catch (Exception exception) {
+            return new Response<>(null, "Erro desconhedico");
+        }
+    }
+
+    public Response<CreateDonationResponseDto> updateCenter(Long donationId, Long id) {
+        try {
+            CreateDonationResponseDto response = donationService.updateCenter(donationId, id);
+            return new Response<>(response, "Centro da doação atualizado com sucesso");
+        }
+        catch (NotFoundException exception) {
+            return new Response<>(null, "Recurso não encontrado: " + exception.getMessage());
+        }
+        catch (BadRequestException exception) {
+            return new Response<>(null, "Dados inválidos: " + exception.getMessage());
+        }
+        catch (DaoException exception) {
+            return new Response<>(null, "Erro ao atualizar centro da doação no banco de dados");
+        }
+        catch (Exception exception) {
+            return new Response<>(null, "Erro desconhedico");
+        }
     }
 }

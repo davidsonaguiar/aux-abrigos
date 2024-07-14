@@ -26,6 +26,4 @@ public class ItemDao extends GenericDao<ItemEntity, Long> {
             throw new DaoException("Erro ao buscar itens por categoria", exception);
         }
     }
-
-
 }

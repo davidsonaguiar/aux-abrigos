@@ -21,6 +21,8 @@ public abstract class GenericDao<Entity, ID> implements DaoProtocol<Entity, ID>{
         try {
             entityManager.getTransaction().begin();
             entityManager.persist(entity);
+            entityManager.flush();
+            entityManager.clear();
             entityManager.getTransaction().commit();
             return entity;
         }
@@ -35,11 +37,8 @@ public abstract class GenericDao<Entity, ID> implements DaoProtocol<Entity, ID>{
         try {
             return entityManager.find(classEntity, id);
         }
-        catch (NoResultException exception) {
-            return null;
-        }
         catch (Exception exception) {
-            throw new DaoException("Erro ao buscar Item.", exception);
+            throw new DaoException("Erro ao buscar recurso.", exception);
         }
     }
 
@@ -51,9 +50,6 @@ public abstract class GenericDao<Entity, ID> implements DaoProtocol<Entity, ID>{
                     .createQuery(query, classEntity)
                     .getResultList();
         }
-        catch (NoResultException exception) {
-            return null;
-        }
         catch (Exception exception) {
             throw new DaoException("Erro ao buscar Itens.", exception);
         }
@@ -61,11 +57,11 @@ public abstract class GenericDao<Entity, ID> implements DaoProtocol<Entity, ID>{
 
     @Override
     public Entity update(Entity entity) {
-        entityManager.getTransaction().begin();
-        Entity entityFound = entityManager.find(classEntity, entity);
-        if (entityFound == null) throw new NoResultException("Entity not found");
         try {
+            entityManager.getTransaction().begin();
             entityManager.merge(entity);
+            entityManager.flush();
+            entityManager.clear();
             entityManager.getTransaction().commit();
             return entity;
         }
@@ -77,14 +73,14 @@ public abstract class GenericDao<Entity, ID> implements DaoProtocol<Entity, ID>{
 
     @Override
     public void deleteById(ID id) {
-        entityManager.getTransaction().begin();
-        Entity entityFound = entityManager.find(classEntity, id);
-        if (entityFound == null) throw new NoResultException("Îtem não encontrado.");
         try {
+            entityManager.getTransaction().begin();
+            Entity entityFound = entityManager.find(classEntity, id);
             entityManager.remove(entityFound);
+            entityManager.flush();
+            entityManager.clear();
             entityManager.getTransaction().commit();
-        }
-        catch (Exception exception) {
+        } catch (Exception exception) {
             entityManager.getTransaction().rollback();
             throw new DaoException("Erro ao deletar Item.", exception);
         }
