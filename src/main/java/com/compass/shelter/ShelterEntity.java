@@ -22,7 +22,7 @@ public class ShelterEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     @NotBlank(message = "Nome do abrigo é obrigatório")
     @Size(min = 3, max = 100, message = "Nome do abrigo deve ter entre 3 e 100 caracteres")
     private String name;
@@ -48,15 +48,20 @@ public class ShelterEntity implements Serializable {
     private String responsible;
 
     @Column(nullable = false)
-    @NotNull(message = "Capacidade do abrigo é obrigatória")
-    @Min(value = 1, message = "Capacidade do abrigo deve ser maior que 0")
-    private Integer capacity;
+    @NotNull(message = "Capacidade de itens do abrigo é obrigatória")
+    @Min(value = 1, message = "Capacidade de itens do abrigo deve ser maior que 0")
+    private Integer capacityItem;
+
+    @Column(nullable = false)
+    @NotNull(message = "Capacidade de pessoas do abrigo é obrigatória")
+    @Min(value = 1, message = "Capacidade de pessoas do abrigo deve ser maior que 0")
+    private Integer capacityPeople;
 
     @Column(nullable = false)
     @NotNull(message = "Ocupação do abrigo é obrigatória")
     @Min(value = 0, message = "Ocupação do abrigo deve ser maior ou igual a 0")
     private Integer occupancy;
 
-    @OneToMany(mappedBy = "shelter", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "shelter", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<ItemEntity> items;
 }

@@ -3,6 +3,7 @@ package ui;
 import com.compass.center.dtos.CenterResponseDto;
 import com.compass.common.exception.NotFoundException;
 import com.compass.item.dtos.ItemDto;
+import com.compass.shelter.dtos.ShelterResponseDto;
 import ui.exceptions.OperationCancelledException;
 
 import java.io.File;
@@ -43,14 +44,7 @@ public class Component {
                 System.out.println("Digite o número do centro desejado: ");
                 System.out.print("Digite aqui -> ");
 
-                String input;
-
-                if(scanner.hasNext()) {
-                    input = scanner.next().trim();
-                } else {
-                    scanner.nextLine();
-                    continue;
-                }
+                String input = scanner.nextLine().trim();
 
                 if (input.equalsIgnoreCase("/sair")) {
                     throw new OperationCancelledException("Operação cancelada pelo usuário.");
@@ -99,6 +93,7 @@ public class Component {
 
             try {
                 option = scanner.nextInt();
+                scanner.nextLine();
 
                 if (option < 0 || option > enumConstants.length) {
                     System.out.println("Opção inválida");
@@ -130,18 +125,8 @@ public class Component {
                 System.out.println("Digite a opção desejada: ");
                 System.out.print("Digite aqui -> ");
 
-                String input;
-
-                if(scanner.hasNext()) {
-                    input = scanner.next().trim();
-                } else {
-                    scanner.nextLine();
-                    continue;
-                }
-
-                Integer option = Integer.parseInt(input);
-
-                System.out.println();
+                Integer option = scanner.nextInt();
+                scanner.nextLine();
 
                 switch (option) {
                     case 1:
@@ -151,8 +136,14 @@ public class Component {
                     default:
                         System.out.println("Opção inválida. Por favor, digite 1 para Sim ou 2 para Não.");
                 }
-            } catch (NumberFormatException exception) {
+            }
+            catch (NumberFormatException exception) {
                 System.out.println("Por favor, digite um número válido.");
+            }
+            catch (InputMismatchException exception) {
+                System.out.println();
+                System.out.println("Entrada inválida. Por favor, digite um número.");
+                scanner.next();
             }
         }
     }
@@ -170,12 +161,7 @@ public class Component {
             System.out.print("Digite aqui -> ");
 
             try {
-                if(scanner.hasNext()) {
-                    input = scanner.next().trim();
-                } else {
-                    scanner.nextLine();
-                    continue;
-                }
+                input = scanner.nextLine().trim();
 
                 if (input.equalsIgnoreCase("/sair")) {
                     throw new OperationCancelledException("Operação cancelada pelo usuário.");
@@ -218,14 +204,7 @@ public class Component {
             System.out.print("Digite aqui -> ");
 
             try {
-                String inputStr;
-
-                if(scanner.hasNext()) {
-                    inputStr = scanner.next().trim();
-                } else {
-                    scanner.nextLine();
-                    continue;
-                }
+                String inputStr = scanner.nextLine().trim();
 
                 if (inputStr.equalsIgnoreCase("/sair")) throw new OperationCancelledException("Operação cancelada pelo usuário.");
 
@@ -271,14 +250,7 @@ public class Component {
             System.out.println("Digite '/sair' para cancelar a operação.");
             System.out.print("Digite aqui -> ");
 
-            String input;
-
-            if(scanner.hasNext()) {
-                input = scanner.next().trim();
-            } else {
-                scanner.nextLine();
-                continue;
-            }
+            String input = scanner.nextLine().trim();
 
             try {
                 if (input.equalsIgnoreCase("/sair")) {
@@ -329,14 +301,7 @@ public class Component {
             System.out.println("Digite '/sair' para cancelar a operação.");
             System.out.print("Digite aqui -> ");
 
-            String input;
-
-            if (scanner.hasNext()) {
-                input = scanner.next().trim();
-            } else {
-                scanner.nextLine();
-                continue;
-            }
+            String input = scanner.nextLine().trim();
 
             try {
                 if (input.equalsIgnoreCase("/sair")) {
@@ -369,6 +334,38 @@ public class Component {
         }
     }
 
+    public String emailField(String label, String textInfo) throws OperationCancelledException {
+        List<String> error = new ArrayList<>();
+
+        while (true) {
+            System.out.println();
+            System.out.println(label);
+            System.out.println(textInfo);
+            System.out.println("Digite '/sair' para cancelar a operação.");
+            System.out.print("Digite aqui -> ");
+
+            try {
+                String input = scanner.nextLine().trim();
+
+                if (input.equalsIgnoreCase("/sair")) throw new OperationCancelledException("Operação cancelada pelo usuário.");
+                if (input.isEmpty()) error.add("Campo não pode ficar em branco");
+                if (!input.contains("@") || !input.contains(".")) error.add("E-mail inválido");
+
+                if (error.isEmpty()) {
+                    return input;
+                } else {
+                    System.out.println("Erro: " + String.join(", ", error));
+                    error.clear();
+                }
+            } catch (OperationCancelledException e) {
+                throw e;
+            } catch (Exception e) {
+                System.out.println("Erro ao ler a entrada. Por favor, tente novamente.");
+                scanner.nextLine();
+            }
+        }
+    }
+
     public void printListItem(List<ItemDto> items) {
         Integer idColLength = 5;
         Integer descritionColLength = 35;
@@ -380,9 +377,11 @@ public class Component {
         Integer unitColLength = 5;
         Integer hygieneTypeColLength = 10;
 
+        String line = "%s | %s | %s | %s | %s | %s | %s | %s | %s \n";
+
         System.out.println();
         System.out.println("Itens da doação:");
-        System.out.printf("%s \t %s \t %s \t %s \t %s \t %s \t %s \t %s \t %s\n",
+        System.out.printf(line,
                 padRight("ID", idColLength),
                 padRight("Quantidade", quantityColLength),
                 padRight("Categoria", categoryColLength),
@@ -404,7 +403,7 @@ public class Component {
             String unit = item.unit() == null ? ifNull : item.unit().name();
             String hygieneType = item.hygieneType() == null ? ifNull : item.hygieneType().name();
 
-            System.out.printf("%s \t %s \t %s \t %s \t %s \t %s \t %s \t %s \t %s\n",
+            System.out.printf(line,
                     padRight(id, idColLength),
                     padRight(quantity, quantityColLength),
                     padRight(item.category().name(), categoryColLength),
@@ -414,6 +413,53 @@ public class Component {
                     padRight(expirationDate, expirationDateColLength),
                     padRight(unit, unitColLength),
                     padRight(item.description(), descritionColLength)
+            );
+        });
+    }
+
+    public void printShelters(List<ShelterResponseDto> items) {
+        Integer idColLength = 3;
+        Integer nameColLength = 25;
+        Integer addressColLength = 25;
+        Integer phoneColLength = 11;
+        Integer emailColLength = 20;
+        Integer responsibleColLength = 15;
+        Integer capacityItemColLength = 10;
+        Integer capacityPeopleColLength = 10;
+        Integer capacityOccupancyColLength = 10;
+        Integer capacityOccupancyPercentageColLength = 10;
+
+        String line = "%s | %s | %s | %s | %s | %s | %s | %s | %s | %s\n";
+
+        System.out.println();
+        System.out.println("Abrigados disponíveis:");
+        System.out.printf(line,
+                padRight("ID", idColLength),
+                padRight("Nome", nameColLength),
+                padRight("Endereço", addressColLength),
+                padRight("Telefone", phoneColLength),
+                padRight("E-mail", emailColLength),
+                padRight("Responsável", responsibleColLength),
+                padRight("Cap. itens", capacityItemColLength),
+                padRight("Cap. pessoas", capacityPeopleColLength),
+                padRight("Ocupação", capacityOccupancyColLength),
+                padRight("Percentual de ocupação", capacityOccupancyPercentageColLength)
+        );
+
+        items.forEach(shelter -> {
+            Integer percentage = (shelter.occupancy() * 100) / shelter.capacityPeople();
+
+            System.out.printf(line,
+                    padRight(shelter.id().toString(), idColLength),
+                    padRight(shelter.name(), nameColLength),
+                    padRight(shelter.address(), addressColLength),
+                    padRight(shelter.phone(), phoneColLength),
+                    padRight(shelter.email(), emailColLength),
+                    padRight(shelter.responsible(), responsibleColLength),
+                    padRight(shelter.capacityItem().toString(), capacityItemColLength),
+                    padRight(shelter.capacityPeople().toString(), capacityPeopleColLength),
+                    padRight(shelter.occupancy().toString(), capacityOccupancyColLength),
+                    padRight(percentage.toString() + "%" , capacityOccupancyColLength)
             );
         });
     }
