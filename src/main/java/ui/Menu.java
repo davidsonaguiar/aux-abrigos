@@ -3,26 +3,41 @@ package ui;
 import com.compass.donation.DonationController;
 import ui.donation.*;
 import ui.exceptions.OperationCancelledException;
+import ui.shelter.CreateShelterUI;
 
 public class Menu {
-    private final DonationController donationController;
-    private final RegisterDonationByFileUI registerDonationByFileUI;
-    private final RegisterDonationUI registerDonationUI;
-    private final ListDonationUI listDonationUI;
-    private final FindDonationUI findDonationUI;
-    private final UpdateDonationUI updateDonationUI;
-    private final DeleteDonationUI deleteDonationUI;
-    private final Component component;
+    private RegisterDonationByFileUI registerDonationByFileUI;
+    private RegisterDonationUI registerDonationUI;
+    private ListDonationUI listDonationUI;
+    private FindDonationUI findDonationUI;
+    private UpdateDonationUI updateDonationUI;
+    private DeleteDonationUI deleteDonationUI;
 
-    public Menu(Component component, DonationController donationController, RegisterDonationByFileUI registerDonationByFileUI, RegisterDonationUI registerDonationUI, ListDonationUI listDonationUI, FindDonationUI findDonationUI, UpdateDonationUI updateDonationUI, DeleteDonationUI deleteDonationUI) {
+    private CreateShelterUI createShelterUI;
+
+    private Component component;
+
+    public Menu(Component component) {
         this.component = component;
-        this.donationController = donationController;
+    }
+
+    public void getDonationUI(
+            RegisterDonationByFileUI registerDonationByFileUI,
+            RegisterDonationUI registerDonationUI,
+            ListDonationUI listDonationUI,
+            FindDonationUI findDonationUI,
+            UpdateDonationUI updateDonationUI,
+            DeleteDonationUI deleteDonationUI) {
         this.registerDonationByFileUI = registerDonationByFileUI;
         this.registerDonationUI = registerDonationUI;
         this.listDonationUI = listDonationUI;
         this.findDonationUI = findDonationUI;
         this.updateDonationUI = updateDonationUI;
         this.deleteDonationUI = deleteDonationUI;
+    }
+
+    public void getShelterUI(CreateShelterUI createShelterUI) {
+        this.createShelterUI = createShelterUI;
     }
 
     public void execute() {
@@ -32,17 +47,21 @@ public class Menu {
                 System.out.println();
                 System.out.println("Menu Principal:");
                 System.out.println("1 - Doações");
+                System.out.println("2 - Abrigos");
 
                 String label = "Escollha uma opção:";
-                String textInfo = "Digite um número inteiro entre 1 e 1.";
+                String textInfo = "Digite um número inteiro entre 1 e 2.";
                 String minError = "Opção inválida. O valor mínimo é 1.";
-                String maxError = "Opção inválida. O valor máximo é 1.";
+                String maxError = "Opção inválida. O valor máximo é 2.";
 
-                int option = component.intField(label, textInfo, 0, minError, 1, maxError);
+                Integer option = component.intField(label, textInfo, 0, minError, 2, maxError);
 
                 switch (option) {
                     case 1:
                         donationMenu();
+                        break;
+                    case 2:
+                        shelterMenu();
                         break;
                     default:
                         System.out.println("Opção inválida. Tente novamente.");
@@ -52,6 +71,41 @@ public class Menu {
                 Boolean finish = component.confirmation("Deseja sair do sistema?");
                 if (finish) exit = true;
             }
+        }
+    }
+
+    private void shelterMenu() {
+        System.out.println("Menu de Abrigos:");
+        System.out.println("1 - Criar Abrigo");
+        System.out.println("2 - Listar Abrigos");
+        System.out.println("3 - Procurar Abrigo");
+        System.out.println("4 - Atualizar Abrigo");
+        System.out.println("5 - Deletar Abrigo");
+
+        String label = "Escollha uma opção:";
+        String textInfo = "Digite um número inteiro entre 1 e 5.";
+        String minError = "Opção inválida. O valor mínimo é 1.";
+        String maxError = "Opção inválida. O valor máximo é 5.";
+        Integer option = component.intField(label, textInfo, 0, minError, 5, maxError);
+
+        switch (option) {
+            case 1:
+                createShelterUI.execute();
+                break;
+            case 2:
+                System.out.println("Listar Abrigos");
+                break;
+            case 3:
+                System.out.println("Procurar Abrigo");
+                break;
+            case 4:
+                System.out.println("Atualizar Abrigo");
+                break;
+            case 5:
+                System.out.println("Deletar Abrigo");
+                break;
+            default:
+                System.out.println("Opção inválida. Tente novamente.");
         }
     }
 

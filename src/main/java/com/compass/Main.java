@@ -14,11 +14,16 @@ import com.compass.item.ItemController;
 import com.compass.item.ItemDao;
 import com.compass.item.ItemEntity;
 import com.compass.item.ItemService;
+import com.compass.shelter.ShelterController;
+import com.compass.shelter.ShelterDao;
+import com.compass.shelter.ShelterEntity;
+import com.compass.shelter.ShelterService;
 import jakarta.persistence.EntityManager;
 import ui.Component;
 import ui.Menu;
 import ui.donation.*;
 import ui.item.UpdateItemUI;
+import ui.shelter.CreateShelterUI;
 
 import java.util.Scanner;
 
@@ -58,17 +63,27 @@ public class Main {
         DonationService donationService = new DonationService(donationDao, centerService, itemService);
         DonationController donationController = new DonationController(donationService);
 
+        ShelterDao shelterDao = new ShelterDao(entityManager, ShelterEntity.class);
+        ShelterService shelterService = new ShelterService(shelterDao);
+        ShelterController shelterController = new ShelterController(shelterService);
+
         Component component = new Component(scanner);
+
+        UpdateItemUI updateItemUI = new UpdateItemUI(itemController, component);
+
         RegisterDonationByFileUI registerDonationByFileUI = new RegisterDonationByFileUI(donationController, component);
         RegisterDonationUI registerDonationUI = new RegisterDonationUI(donationController, centerController, component);
         ListDonationUI listDonationUI = new ListDonationUI(donationController, component);
         FindDonationUI findDonationUI = new FindDonationUI(donationController, component);
-        UpdateItemUI updateItemUI = new UpdateItemUI(itemController, component);
         UpdateDonationUI updateDonationUI = new UpdateDonationUI(donationController, centerController, updateItemUI, component);
         DeleteDonationUI deleteDonationUI = new DeleteDonationUI(donationController, component);
 
-        Menu menu = new Menu(component, donationController, registerDonationByFileUI, registerDonationUI, listDonationUI, findDonationUI, updateDonationUI, deleteDonationUI);
+        CreateShelterUI createShelterUI = new CreateShelterUI(shelterController, component);
 
+        Menu menu = new Menu(component);
+        menu.getDonationUI(registerDonationByFileUI, registerDonationUI, listDonationUI, findDonationUI, updateDonationUI, deleteDonationUI);
+        menu.getShelterUI(createShelterUI);
         return menu;
     }
+
 }

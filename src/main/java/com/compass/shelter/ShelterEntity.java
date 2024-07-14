@@ -48,9 +48,14 @@ public class ShelterEntity implements Serializable {
     private String responsible;
 
     @Column(nullable = false)
-    @NotNull(message = "Capacidade do abrigo é obrigatória")
-    @Min(value = 1, message = "Capacidade do abrigo deve ser maior que 0")
-    private Integer capacity;
+    @NotNull(message = "Capacidade de itens do abrigo é obrigatória")
+    @Min(value = 1, message = "Capacidade de itens do abrigo deve ser maior que 0")
+    private Integer capacityItem;
+
+    @Column(nullable = false)
+    @NotNull(message = "Capacidade de pessoas do abrigo é obrigatória")
+    @Min(value = 1, message = "Capacidade de pessoas do abrigo deve ser maior que 0")
+    private Integer capacityPeople;
 
     @Column(nullable = false)
     @NotNull(message = "Ocupação do abrigo é obrigatória")

@@ -43,14 +43,7 @@ public class Component {
                 System.out.println("Digite o número do centro desejado: ");
                 System.out.print("Digite aqui -> ");
 
-                String input;
-
-                if(scanner.hasNext()) {
-                    input = scanner.next().trim();
-                } else {
-                    scanner.nextLine();
-                    continue;
-                }
+                String input = scanner.nextLine().trim();
 
                 if (input.equalsIgnoreCase("/sair")) {
                     throw new OperationCancelledException("Operação cancelada pelo usuário.");
@@ -99,6 +92,7 @@ public class Component {
 
             try {
                 option = scanner.nextInt();
+                scanner.nextLine();
 
                 if (option < 0 || option > enumConstants.length) {
                     System.out.println("Opção inválida");
@@ -130,18 +124,8 @@ public class Component {
                 System.out.println("Digite a opção desejada: ");
                 System.out.print("Digite aqui -> ");
 
-                String input;
-
-                if(scanner.hasNext()) {
-                    input = scanner.next().trim();
-                } else {
-                    scanner.nextLine();
-                    continue;
-                }
-
-                Integer option = Integer.parseInt(input);
-
-                System.out.println();
+                Integer option = scanner.nextInt();
+                scanner.nextLine();
 
                 switch (option) {
                     case 1:
@@ -170,12 +154,7 @@ public class Component {
             System.out.print("Digite aqui -> ");
 
             try {
-                if(scanner.hasNext()) {
-                    input = scanner.next().trim();
-                } else {
-                    scanner.nextLine();
-                    continue;
-                }
+                input = scanner.nextLine().trim();
 
                 if (input.equalsIgnoreCase("/sair")) {
                     throw new OperationCancelledException("Operação cancelada pelo usuário.");
@@ -218,14 +197,7 @@ public class Component {
             System.out.print("Digite aqui -> ");
 
             try {
-                String inputStr;
-
-                if(scanner.hasNext()) {
-                    inputStr = scanner.next().trim();
-                } else {
-                    scanner.nextLine();
-                    continue;
-                }
+                String inputStr = scanner.nextLine().trim();
 
                 if (inputStr.equalsIgnoreCase("/sair")) throw new OperationCancelledException("Operação cancelada pelo usuário.");
 
@@ -271,14 +243,7 @@ public class Component {
             System.out.println("Digite '/sair' para cancelar a operação.");
             System.out.print("Digite aqui -> ");
 
-            String input;
-
-            if(scanner.hasNext()) {
-                input = scanner.next().trim();
-            } else {
-                scanner.nextLine();
-                continue;
-            }
+            String input = scanner.nextLine().trim();
 
             try {
                 if (input.equalsIgnoreCase("/sair")) {
@@ -329,14 +294,7 @@ public class Component {
             System.out.println("Digite '/sair' para cancelar a operação.");
             System.out.print("Digite aqui -> ");
 
-            String input;
-
-            if (scanner.hasNext()) {
-                input = scanner.next().trim();
-            } else {
-                scanner.nextLine();
-                continue;
-            }
+            String input = scanner.nextLine().trim();
 
             try {
                 if (input.equalsIgnoreCase("/sair")) {
@@ -365,6 +323,38 @@ public class Component {
                 throw exception;
             } catch (Exception exception) {
                 System.out.println("Erro ao ler a entrada. Por favor, tente novamente.");
+            }
+        }
+    }
+
+    public String emailField(String label, String textInfo) throws OperationCancelledException {
+        List<String> error = new ArrayList<>();
+
+        while (true) {
+            System.out.println();
+            System.out.println(label);
+            System.out.println(textInfo);
+            System.out.println("Digite '/sair' para cancelar a operação.");
+            System.out.print("Digite aqui -> ");
+
+            try {
+                String input = scanner.nextLine().trim();
+
+                if (input.equalsIgnoreCase("/sair")) throw new OperationCancelledException("Operação cancelada pelo usuário.");
+                if (input.isEmpty()) error.add("Campo não pode ficar em branco");
+                if (!input.contains("@") || !input.contains(".")) error.add("E-mail inválido");
+
+                if (error.isEmpty()) {
+                    return input;
+                } else {
+                    System.out.println("Erro: " + String.join(", ", error));
+                    error.clear();
+                }
+            } catch (OperationCancelledException e) {
+                throw e;
+            } catch (Exception e) {
+                System.out.println("Erro ao ler a entrada. Por favor, tente novamente.");
+                scanner.nextLine();
             }
         }
     }
