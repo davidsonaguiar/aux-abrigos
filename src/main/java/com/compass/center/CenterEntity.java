@@ -11,6 +11,7 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -47,7 +48,7 @@ public class CenterEntity implements Serializable {
         if(items.isEmpty())  return true;
         Integer quantityType = items.stream()
                 .filter(item -> item.getCategory().equals(categoryItem) )
-                .mapToInt(item -> item.getQuantity())
+                .mapToInt(item -> 1)
                 .sum();
         return (capacity - quantityType) >= quantity;
     }
