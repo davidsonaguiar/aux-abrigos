@@ -11,9 +11,10 @@ public class Menu {
     private final ListDonationUI listDonationUI;
     private final FindDonationUI findDonationUI;
     private final UpdateDonationUI updateDonationUI;
+    private final DeleteDonationUI deleteDonationUI;
     private final Component component;
 
-    public Menu(Component component, DonationController donationController, RegisterDonationByFileUI registerDonationByFileUI, RegisterDonationUI registerDonationUI, ListDonationUI listDonationUI, FindDonationUI findDonationUI, UpdateDonationUI updateDonationUI) {
+    public Menu(Component component, DonationController donationController, RegisterDonationByFileUI registerDonationByFileUI, RegisterDonationUI registerDonationUI, ListDonationUI listDonationUI, FindDonationUI findDonationUI, UpdateDonationUI updateDonationUI, DeleteDonationUI deleteDonationUI) {
         this.component = component;
         this.donationController = donationController;
         this.registerDonationByFileUI = registerDonationByFileUI;
@@ -21,6 +22,7 @@ public class Menu {
         this.listDonationUI = listDonationUI;
         this.findDonationUI = findDonationUI;
         this.updateDonationUI = updateDonationUI;
+        this.deleteDonationUI = deleteDonationUI;
     }
 
     public void execute() {
@@ -64,12 +66,13 @@ public class Menu {
                 System.out.println("3 - Listar Doações");
                 System.out.println("4 - Procurar Doações");
                 System.out.println("5 - Atualizar Doação");
+                System.out.println("6 - Deletar Doação");
 
                 String label = "Escollha uma opção:";
-                String textInfo = "Digite um número inteiro entre 0 e 5.";
-                String minError = "Opção inválida. O valor mínimo é 0.";
-                String maxError = "Opção inválida. O valor máximo é 5.";
-                int option = component.intField(label, textInfo, 0, minError, 5, maxError);
+                String textInfo = "Digite um número inteiro entre 1 e 6.";
+                String minError = "Opção inválida. 1 valor mínimo é 0.";
+                String maxError = "Opção inválida. 1 valor máximo é 6.";
+                int option = component.intField(label, textInfo, 0, minError, 6, maxError);
 
                 switch (option) {
                     case 1:
@@ -87,17 +90,15 @@ public class Menu {
                     case 5:
                         updateDonationUI.execute();
                         break;
-                    case 0:
-                        exit = true;
+                    case 6:
+                        deleteDonationUI.execute();
                         break;
                     default:
                         System.out.println("Opção inválida. Tente novamente.");
                 }
             }
             catch (OperationCancelledException exception) {
-                System.out.println("Operação cancelada.");
-                Boolean finish = component.confirmation("Deseja voltar para o menu principal?");
-                return;
+                break;
             }
         }
     }

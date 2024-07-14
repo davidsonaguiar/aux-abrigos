@@ -64,9 +64,10 @@ public class Main {
         ListDonationUI listDonationUI = new ListDonationUI(donationController, component);
         FindDonationUI findDonationUI = new FindDonationUI(donationController, component);
         UpdateItemUI updateItemUI = new UpdateItemUI(itemController, component);
-        UpdateDonationUI updateDonationUI = new UpdateDonationUI(donationController, centerController, updateItemUI, itemController, component);
+        UpdateDonationUI updateDonationUI = new UpdateDonationUI(donationController, centerController, updateItemUI, component);
+        DeleteDonationUI deleteDonationUI = new DeleteDonationUI(donationController, component);
 
-        Menu menu = new Menu(component, donationController, registerDonationByFileUI, registerDonationUI, listDonationUI, findDonationUI, updateDonationUI);
+        Menu menu = new Menu(component, donationController, registerDonationByFileUI, registerDonationUI, listDonationUI, findDonationUI, updateDonationUI, deleteDonationUI);
 
         return menu;
     }

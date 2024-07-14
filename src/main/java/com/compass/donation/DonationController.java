@@ -108,6 +108,9 @@ public class DonationController {
             CreateDonationResponseDto response = donationService.updateCenter(donationId, id);
             return new Response<>(response, "Centro da doação atualizado com sucesso");
         }
+        catch (NoCapacityException exception) {
+            return new Response<>(null, exception.getMessage());
+        }
         catch (NotFoundException exception) {
             return new Response<>(null, "Recurso não encontrado: " + exception.getMessage());
         }
@@ -135,6 +138,22 @@ public class DonationController {
         }
         catch (DaoException exception) {
             return new Response<>(null, "Erro ao remover item da doação no banco de dados");
+        }
+        catch (Exception exception) {
+            return new Response<>(null, "Erro desconhedico");
+        }
+    }
+
+    public Response<CreateDonationResponseDto> delete(Long id) {
+        try {
+            CreateDonationResponseDto response = donationService.delete(id);
+            return new Response<>(response, "Doação removida com sucesso");
+        }
+        catch (NotFoundException exception) {
+            return new Response<>(null, "Recurso não encontrado: " + exception.getMessage());
+        }
+        catch (DaoException exception) {
+            return new Response<>(null, "Erro ao remover doação no banco de dados");
         }
         catch (Exception exception) {
             return new Response<>(null, "Erro desconhedico");

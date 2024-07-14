@@ -19,14 +19,12 @@ public class UpdateDonationUI {
     private final DonationController donationController;
     private final CenterController centerController;
     private final UpdateItemUI updateItemUI;
-    private final ItemController itemController;
     private final Component component;
 
-    public UpdateDonationUI(DonationController donationController, CenterController centerController, UpdateItemUI updateItemUI, ItemController itemController, Component component) {
+    public UpdateDonationUI(DonationController donationController, CenterController centerController, UpdateItemUI updateItemUI, Component component) {
         this.donationController = donationController;
         this.centerController = centerController;
         this.updateItemUI = updateItemUI;
-        this.itemController = itemController;
         this.component = component;
     }
 
@@ -127,7 +125,7 @@ public class UpdateDonationUI {
 
         component.printListItem(items);
 
-        String label = "Informe o ID do item.";
+        String label = "Selecione um Item, informe o ID.";
         String textInfo = "Digite um número inteiro positivo.";
         String minError = "ID inválido. O valor mínimo é 1.";
         Integer itemId = component.intField(label, textInfo, 1, minError, null, null);
@@ -138,24 +136,22 @@ public class UpdateDonationUI {
             System.out.println("ID informado não corresponde a nenhum item.");
         }
 
-        Integer nOptions = items.size() > 1 ? 2 : 1;
-
         System.out.println();
         System.out.println("O que deseja fazer com o item?");
         System.out.println("1 - Atualizar informações do item");
-        if(items.size() > 1) System.out.println("2 - Remover o item da lista");
+        System.out.println("2 - Remover o item da lista");
 
         label = "Escolha uma opção.";
-        textInfo = "Digite um número inteiro entre 0 e " + nOptions + ".";
-        String maxError = "Opção inválida. O valor máximo é " + nOptions + ".";
-        Integer option = component.intField(label, textInfo, 0, minError, nOptions, maxError);
+        textInfo = "Digite um número inteiro entre 0 e 2.";
+        String maxError = "Opção inválida. O valor máximo é 2.";
+        Integer option = component.intField(label, textInfo, 0, minError, 2, maxError);
 
         switch (option) {
             case 1:
                 updateItemUI.menuUpdate(item);
                 break;
             case 2:
-                removerItem(donationId, item.id());
+                removerItem(donationId, item.id(), items.size());
                 break;
             default:
                 System.out.println("Opção inválida. Tente novamente.");
@@ -165,12 +161,34 @@ public class UpdateDonationUI {
         if (!confirmation) throw new OperationCancelledException("Operação cancelada.");
     }
 
-    private void removerItem(Long donationId, Long ItemId) {
-        Response<ItemDto> response = donationController.removerItem(donationId, ItemId);
+    private void removerItem(Long donationId, Long ItemId, Integer itemsSize) {
+        if(itemsSize == 1) {
+            System.out.println();
+            System.out.println("Há apenas um item na lista de doação, caso continue a doação será deletada");
+            Boolean confirm = component.confirmation("Deseja realmente deletar essa doação?");
+            if(!confirm) {
+                System.out.println("Operação cancelada");
+            }
+            else {
+                Response<CreateDonationResponseDto> response = donationController.delete(donationId);
 
-        System.out.println();
-        System.out.println(response.getMessage());
+                System.out.println();
+                System.out.println(response.getMessage());
 
-        if (response.getData() != null) component.printListItem(List.of(response.getData()));
+                if (response.getData() != null) {
+                    CreateDonationResponseDto donationResponseDto = response.getData();
+                    System.out.printf("Doação deletada: ID: %d - Centro: %s\n", donationResponseDto.donationId(), donationResponseDto.centerName());
+                }
+            }
+        }
+        else {
+            Response<ItemDto> response = donationController.removerItem(donationId, ItemId);
+
+            System.out.println();
+            System.out.println(response.getMessage());
+
+            if (response.getData() != null) component.printListItem(List.of(response.getData()));
+        }
+
     }
 }

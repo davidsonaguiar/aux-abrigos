@@ -164,61 +164,33 @@ public class DonationService {
         }
     }
 
-    public DonationEntity update(DonationEntity donation) {
-        try {
-            return donationDao.update(donation);
-        }
-        catch (NotFoundException exception) {
-            throw new NotFoundException(exception.getMessage());
-        }
-        catch (DaoException exception) {
-            throw exception;
-        }
+    public CreateDonationResponseDto delete(Long id) throws NotFoundException, DaoException {
+        DonationEntity donation = donationDao.findById(id);
+        if(donation == null) throw new NotFoundException("Doação não encontrada");
+        donationDao.deleteById(id);
+        return CreateDonationResponseDto.fromEntity(donation);
     }
 
-    public void delete(Long id) {
-        try {
-            donationDao.deleteById(id);
-        }
-        catch (NoResultException exception) {
-            throw new NotFoundException("Doação não encontrada");
-        }
-        catch (DaoException exception) {
-            throw exception;
-        }
+    public CreateDonationResponseDto updateCenter(Long donationId, Long centerId) throws NotFoundException, DaoException, NoCapacityException {
+        DonationEntity donation = donationDao.findById(donationId);
+        if (donation == null) throw new NotFoundException("Doação não encontrada");
+        CenterEntity center = centerService.findById(centerId);
+        if (center == null) throw new NotFoundException("Centro não encontrado");
+
+        verifyCapacity(ItemDto.fromEntities(donation.getItems()), center);
+
+        donation.setCenter(center);
+        DonationEntity donationUpdate = donationDao.updateCenter(donation);
+        return new CreateDonationResponseDto(donationUpdate.getId(), center.getName(), donationUpdate.getItems().size());
     }
 
-    public CreateDonationResponseDto updateCenter(Long donationId, Long centerId) {
-        try {
-            DonationEntity donation = donationDao.findById(donationId);
-            if (donation == null) throw new NotFoundException("Doação não encontrada");
-            CenterEntity center = centerService.findById(centerId);
-            if (center == null) throw new NotFoundException("Centro não encontrado");
-
-            donation.setCenter(center);
-            DonationEntity donationUpdate = donationDao.updateCenter(donation);
-            return new CreateDonationResponseDto(donationUpdate.getId(), center.getName(), donationUpdate.getItems().size());
-        }
-        catch (NotFoundException exception) {
-            throw exception;
-        }
-        catch (DaoException exception) {
-            throw exception;
-        }
-    }
-
-    public ItemDto removeItem(Long donationId, Long itemId) {
-        try {
-            DonationEntity donation = donationDao.findById(donationId);
-            if (donation == null) throw new NotFoundException("Doação não encontrada");
-            ItemEntity item = donation.getItems().stream().filter(i -> i.getId().equals(itemId)).findFirst().orElse(null);
-            if (item == null) throw new NotFoundException("Item não encontrado");
-            donation.getItems().remove(item);
-            donationDao.update(donation);
-            return itemService.delete(itemId);
-        }
-        catch (NotFoundException exception) {
-            throw exception;
-        }
+    public ItemDto removeItem(Long donationId, Long itemId) throws NotFoundException, DaoException {
+        DonationEntity donation = donationDao.findById(donationId);
+        if (donation == null) throw new NotFoundException("Doação não encontrada");
+        ItemEntity item = donation.getItems().stream().filter(i -> i.getId().equals(itemId)).findFirst().orElse(null);
+        if (item == null) throw new NotFoundException("Item não encontrado");
+        donation.getItems().remove(item);
+        donationDao.update(donation);
+        return itemService.delete(itemId);
     }
 }
