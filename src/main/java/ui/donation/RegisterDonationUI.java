@@ -86,7 +86,7 @@ public class RegisterDonationUI {
                 ItemDto item = new ItemDto(null, description, quantity, category, center.id(), size, gender, expirationDate, unit, hygieneType);
                 items.add(item);
 
-                Boolean confirmation = component.confirmation("Deseja adicionar mais um item? Caso não, a doação será descartada.");
+                Boolean confirmation = component.confirmation("Deseja adicionar mais um item?");
                 if(!confirmation) break;
             }
 
@@ -109,7 +109,8 @@ public class RegisterDonationUI {
                 System.out.printf("Centro: %s%n", responseDonationSave.getData().centerName());
                 System.out.printf("Quantidade de itens: %d%n", responseDonationSave.getData().quantity());
             }
-        } catch (OperationCancelledException exception) {
+        }
+        catch (OperationCancelledException exception) {
             Boolean confirmation = component.confirmation("Deseja cancelar o registro da doação?");
             if(confirmation) return;
         }

@@ -36,7 +36,7 @@ public class DonationEntity implements Serializable {
     @NotNull(message = "Centro de doação é obrigatório")
     private CenterEntity center;
 
-    @OneToMany
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     @JoinColumn(name = "donation_id")
     @NotNull(message = "A lista de itens da doação não pode ser vazia ou nula")
     private List<ItemEntity> items;

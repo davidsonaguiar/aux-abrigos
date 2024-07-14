@@ -21,8 +21,6 @@ public abstract class GenericDao<Entity, ID> implements DaoProtocol<Entity, ID>{
         try {
             entityManager.getTransaction().begin();
             entityManager.persist(entity);
-            entityManager.flush();
-            entityManager.clear();
             entityManager.getTransaction().commit();
             return entity;
         }

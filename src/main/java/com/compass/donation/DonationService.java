@@ -4,24 +4,32 @@ import com.compass.center.CenterEntity;
 import com.compass.center.CenterService;
 import com.compass.common.exception.BadRequestException;
 import com.compass.common.exception.DaoException;
+import com.compass.common.exception.NoCapacityException;
 import com.compass.common.exception.NotFoundException;
 import com.compass.donation.dtos.CreateDonationResponseDto;
 import com.compass.donation.dtos.DonationDto;
 import com.compass.donation.dtos.FindDonationResponseDto;
 import com.compass.item.ItemEntity;
+import com.compass.item.ItemService;
+import com.compass.item.dtos.ItemDto;
+import com.compass.item.enums.CategoryItem;
 import jakarta.persistence.NoResultException;
 import jakarta.validation.ConstraintViolationException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class DonationService {
     private final DonationDao donationDao;
     private final CenterService centerService;
+    private final ItemService itemService;
 
-    public DonationService(DonationDao donationDao, CenterService centerService) {
+    public DonationService(DonationDao donationDao, CenterService centerService, ItemService itemService) {
         this.donationDao = donationDao;
         this.centerService = centerService;
+        this.itemService = itemService;
     }
 
     public FindDonationResponseDto findDonationById(Long id) {
@@ -55,56 +63,105 @@ public class DonationService {
     public CreateDonationResponseDto save(DonationDto donationDto) throws DaoException, NotFoundException, BadRequestException {
         try {
             CenterEntity center = centerService.findById(donationDto.centerId());
-            List<ItemEntity> item = new ArrayList<>();
 
-            donationDto.items().forEach(itemDto -> {
-                ItemEntity itemEntity = new ItemEntity();
-                itemEntity.setDescription(itemDto.description());
-                itemEntity.setCategory(itemDto.category());
-                itemEntity.setQuantity(itemDto.quantity());
-                itemEntity.setCenter(center);
-                itemEntity.setSize(itemDto.size());
-                itemEntity.setGender(itemDto.gender());
-                itemEntity.setExpirationDate(itemDto.expirationDate());
-                itemEntity.setUnit(itemDto.unit());
-                itemEntity.setHygieneType(itemDto.hygieneType());
-                item.add(itemEntity);
-            });
+            verifyCapacity(donationDto.items(), center);
+
+            List<ItemEntity> items = new ArrayList<>();
+
+            donationDto.items().forEach(itemDto -> items.add(createItem(itemDto, center)));
 
             DonationEntity donation = new DonationEntity();
             donation.setCenter(center);
             donation.setDate(donationDto.date());
-            donation.setItems(item);
+            donation.setItems(items);
 
             DonationEntity donationSave = donationDao.save(donation);
-            CreateDonationResponseDto response = new CreateDonationResponseDto(donationSave.getId(), center.getName(), item.size());
-            return response;
+            return CreateDonationResponseDto.fromEntity(donationSave);
+        }
+        catch (NotFoundException exception) {
+            throw new NotFoundException(exception.getMessage());
         }
         catch (ConstraintViolationException exception) {
             throw new BadRequestException(exception.getMessage());
         }
     }
 
-    public List<CreateDonationResponseDto> saveMany(List<DonationDto> donations) {
-        List<CreateDonationResponseDto> response = new ArrayList<>();
+    public List<CreateDonationResponseDto> saveMany(List<DonationDto> donations) throws DaoException, NotFoundException, BadRequestException {
+        String errors = null;
 
-        donations.forEach(donation -> {
-            try {
-                CreateDonationResponseDto donationSave = save(donation);
-                response.add(donationSave);
+        try {
+            for(DonationDto donation : donations) {
+                CenterEntity center = centerService.findById(donation.centerId());
+                try {
+                    verifyCapacity(donation.items(), center);
+                }
+                catch (NoCapacityException exception) {
+                    if (errors == null) errors = "";
+                    errors += "Centro: " + center.getName() + " - " + exception.getMessage() + "\n";
+                }
             }
-            catch (NotFoundException exception) {
-                throw new NotFoundException(exception.getMessage());
+
+            if (errors != null) {
+                throw new NoCapacityException(errors);
             }
-            catch (BadRequestException exception) {
-                throw new BadRequestException(exception.getMessage());
+
+            List<DonationEntity> donationsEntities = new ArrayList<>();
+
+            for(DonationDto donation : donations) {
+                List<ItemEntity> items = new ArrayList<>();
+                donation.items().forEach(itemDto -> items.add(createItem(itemDto, centerService.findById(donation.centerId()))));
+                DonationEntity donationEntity = new DonationEntity();
+                donationEntity.setCenter(centerService.findById(donation.centerId()));
+                donationEntity.setDate(donation.date());
+                donationEntity.setItems(items);
+                donationsEntities.add(donationEntity);
             }
-            catch (DaoException exception) {
-                exception.printStackTrace();
-                throw exception;
+
+            List<DonationEntity> donationSave = donationDao.saveMany(donationsEntities);
+            return CreateDonationResponseDto.fromEntities(donationSave);
+        }
+        catch (NotFoundException exception) {
+            throw new NotFoundException(exception.getMessage());
+        }
+
+        catch (BadRequestException exception) {
+            throw new BadRequestException(exception.getMessage());
+        }
+    }
+
+    private ItemEntity createItem(ItemDto itemDto, CenterEntity center) {
+        ItemEntity itemEntity = new ItemEntity();
+
+        itemEntity.setDescription(itemDto.description());
+        itemEntity.setCategory(itemDto.category());
+        itemEntity.setQuantity(itemDto.quantity());
+        itemEntity.setCenter(center);
+        itemEntity.setSize(itemDto.size());
+        itemEntity.setGender(itemDto.gender());
+        itemEntity.setExpirationDate(itemDto.expirationDate());
+        itemEntity.setUnit(itemDto.unit());
+        itemEntity.setHygieneType(itemDto.hygieneType());
+
+        return itemEntity;
+    }
+
+    private void verifyCapacity(List<ItemDto> items, CenterEntity center) throws NoCapacityException {
+        Map<CategoryItem, Long> quantityByCategory = items.stream()
+                .collect(Collectors.groupingBy(ItemDto::category, Collectors.counting()));
+
+        String errorsCapacity = null;
+        for (Map.Entry<CategoryItem, Long> entry : quantityByCategory.entrySet()) {
+            CategoryItem category = entry.getKey();
+            Long quantity = entry.getValue();
+            if (!center.existsCapacityForCategoryItem(quantity.intValue(), category)) {
+                if (errorsCapacity == null) errorsCapacity = "";
+                errorsCapacity += "Capacidade insuficiente para " + category + "\n";
             }
-        });
-        return response;
+        }
+
+        if (errorsCapacity != null) {
+            throw new NoCapacityException(errorsCapacity);
+        }
     }
 
     public DonationEntity update(DonationEntity donation) {
@@ -146,6 +203,21 @@ public class DonationService {
             throw exception;
         }
         catch (DaoException exception) {
+            throw exception;
+        }
+    }
+
+    public ItemDto removeItem(Long donationId, Long itemId) {
+        try {
+            DonationEntity donation = donationDao.findById(donationId);
+            if (donation == null) throw new NotFoundException("Doação não encontrada");
+            ItemEntity item = donation.getItems().stream().filter(i -> i.getId().equals(itemId)).findFirst().orElse(null);
+            if (item == null) throw new NotFoundException("Item não encontrado");
+            donation.getItems().remove(item);
+            donationDao.update(donation);
+            return itemService.delete(itemId);
+        }
+        catch (NotFoundException exception) {
             throw exception;
         }
     }

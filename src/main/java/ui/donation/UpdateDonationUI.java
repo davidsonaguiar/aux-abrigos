@@ -155,7 +155,7 @@ public class UpdateDonationUI {
                 updateItemUI.menuUpdate(item);
                 break;
             case 2:
-                removerItem(item.id());
+                removerItem(donationId, item.id());
                 break;
             default:
                 System.out.println("Opção inválida. Tente novamente.");
@@ -165,8 +165,8 @@ public class UpdateDonationUI {
         if (!confirmation) throw new OperationCancelledException("Operação cancelada.");
     }
 
-    private void removerItem(Long id) {
-        Response<ItemDto> response = itemController.delete(id);
+    private void removerItem(Long donationId, Long ItemId) {
+        Response<ItemDto> response = donationController.removerItem(donationId, ItemId);
 
         System.out.println();
         System.out.println(response.getMessage());

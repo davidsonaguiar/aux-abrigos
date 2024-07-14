@@ -50,13 +50,13 @@ public class Main {
         CenterService centerService = new CenterService(centerDao);
         CenterController centerController = new CenterController(centerService);
 
-        DonationDao donationDao = new DonationDao(entityManager, DonationEntity.class);
-        DonationService donationService = new DonationService(donationDao, centerService);
-        DonationController donationController = new DonationController(donationService);
-
         ItemDao itemDao = new ItemDao(entityManager, ItemEntity.class);
         ItemService itemService = new ItemService(itemDao);
         ItemController itemController = new ItemController(itemService);
+
+        DonationDao donationDao = new DonationDao(entityManager, DonationEntity.class);
+        DonationService donationService = new DonationService(donationDao, centerService, itemService);
+        DonationController donationController = new DonationController(donationService);
 
         Component component = new Component(scanner);
         RegisterDonationByFileUI registerDonationByFileUI = new RegisterDonationByFileUI(donationController, component);
