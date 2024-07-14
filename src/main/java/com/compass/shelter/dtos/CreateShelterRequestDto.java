@@ -1,8 +1,10 @@
 package com.compass.shelter.dtos;
 
+import com.compass.item.ItemEntity;
 import com.compass.shelter.ShelterEntity;
 import jakarta.validation.constraints.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public record CreateShelterRequestDto(
@@ -50,5 +52,19 @@ public record CreateShelterRequestDto(
         return shelterEntities.stream()
                 .map(CreateShelterRequestDto::fromEntity)
                 .toList();
+    }
+
+    public static ShelterEntity toEntity(CreateShelterRequestDto createShelterRequestDto) {
+        return new ShelterEntity(
+                null,
+                createShelterRequestDto.name(),
+                createShelterRequestDto.address(),
+                createShelterRequestDto.phone(),
+                createShelterRequestDto.email(),
+                createShelterRequestDto.responsible(),
+                200,
+                createShelterRequestDto.capacityPeople(),
+                createShelterRequestDto.occupancy(),
+                new ArrayList<>());
     }
 }

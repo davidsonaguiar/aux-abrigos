@@ -3,6 +3,7 @@ package ui;
 import com.compass.center.dtos.CenterResponseDto;
 import com.compass.common.exception.NotFoundException;
 import com.compass.item.dtos.ItemDto;
+import com.compass.shelter.dtos.ShelterResponseDto;
 import ui.exceptions.OperationCancelledException;
 
 import java.io.File;
@@ -370,9 +371,11 @@ public class Component {
         Integer unitColLength = 5;
         Integer hygieneTypeColLength = 10;
 
+        String line = "%s | %s | %s | %s | %s | %s | %s | %s | %s | %s\n";
+
         System.out.println();
         System.out.println("Itens da doação:");
-        System.out.printf("%s \t %s \t %s \t %s \t %s \t %s \t %s \t %s \t %s\n",
+        System.out.printf(line,
                 padRight("ID", idColLength),
                 padRight("Quantidade", quantityColLength),
                 padRight("Categoria", categoryColLength),
@@ -394,7 +397,7 @@ public class Component {
             String unit = item.unit() == null ? ifNull : item.unit().name();
             String hygieneType = item.hygieneType() == null ? ifNull : item.hygieneType().name();
 
-            System.out.printf("%s \t %s \t %s \t %s \t %s \t %s \t %s \t %s \t %s\n",
+            System.out.printf(line,
                     padRight(id, idColLength),
                     padRight(quantity, quantityColLength),
                     padRight(item.category().name(), categoryColLength),
@@ -404,6 +407,53 @@ public class Component {
                     padRight(expirationDate, expirationDateColLength),
                     padRight(unit, unitColLength),
                     padRight(item.description(), descritionColLength)
+            );
+        });
+    }
+
+    public void printShelters(List<ShelterResponseDto> items) {
+        Integer idColLength = 3;
+        Integer nameColLength = 25;
+        Integer addressColLength = 25;
+        Integer phoneColLength = 11;
+        Integer emailColLength = 20;
+        Integer responsibleColLength = 15;
+        Integer capacityItemColLength = 10;
+        Integer capacityPeopleColLength = 10;
+        Integer capacityOccupancyColLength = 10;
+        Integer capacityOccupancyPercentageColLength = 10;
+
+        String line = "%s | %s | %s | %s | %s | %s | %s | %s | %s | %s\n";
+
+        System.out.println();
+        System.out.println("Abrigados disponíveis:");
+        System.out.printf(line,
+                padRight("ID", idColLength),
+                padRight("Nome", nameColLength),
+                padRight("Endereço", addressColLength),
+                padRight("Telefone", phoneColLength),
+                padRight("E-mail", emailColLength),
+                padRight("Responsável", responsibleColLength),
+                padRight("Cap. itens", capacityItemColLength),
+                padRight("Cap. pessoas", capacityPeopleColLength),
+                padRight("Ocupação", capacityOccupancyColLength),
+                padRight("Percentual de ocupação", capacityOccupancyPercentageColLength)
+        );
+
+        items.forEach(shelter -> {
+            Integer percentage = (shelter.occupancy() * 100) / shelter.capacityPeople();
+
+            System.out.printf(line,
+                    padRight(shelter.id().toString(), idColLength),
+                    padRight(shelter.name(), nameColLength),
+                    padRight(shelter.address(), addressColLength),
+                    padRight(shelter.phone(), phoneColLength),
+                    padRight(shelter.email(), emailColLength),
+                    padRight(shelter.responsible(), responsibleColLength),
+                    padRight(shelter.capacityItem().toString(), capacityItemColLength),
+                    padRight(shelter.capacityPeople().toString(), capacityPeopleColLength),
+                    padRight(shelter.occupancy().toString(), capacityOccupancyColLength),
+                    padRight(percentage.toString() + "%" , capacityOccupancyColLength)
             );
         });
     }

@@ -4,6 +4,9 @@ import com.compass.donation.DonationController;
 import ui.donation.*;
 import ui.exceptions.OperationCancelledException;
 import ui.shelter.CreateShelterUI;
+import ui.shelter.FindShelderUI;
+import ui.shelter.ListShelterUI;
+import ui.shelter.UpdateShelterUI;
 
 public class Menu {
     private RegisterDonationByFileUI registerDonationByFileUI;
@@ -14,6 +17,9 @@ public class Menu {
     private DeleteDonationUI deleteDonationUI;
 
     private CreateShelterUI createShelterUI;
+    private ListShelterUI listShelterUI;
+    private FindShelderUI findShelterUI;
+    private UpdateShelterUI updateShelterUI;
 
     private Component component;
 
@@ -36,8 +42,11 @@ public class Menu {
         this.deleteDonationUI = deleteDonationUI;
     }
 
-    public void getShelterUI(CreateShelterUI createShelterUI) {
+    public void getShelterUI(CreateShelterUI createShelterUI, ListShelterUI listShelterUI, FindShelderUI findShelterUI, UpdateShelterUI updateShelterUI) {
         this.createShelterUI = createShelterUI;
+        this.listShelterUI = listShelterUI;
+        this.findShelterUI = findShelterUI;
+        this.updateShelterUI = updateShelterUI;
     }
 
     public void execute() {
@@ -93,13 +102,13 @@ public class Menu {
                 createShelterUI.execute();
                 break;
             case 2:
-                System.out.println("Listar Abrigos");
+                listShelterUI.execute();
                 break;
             case 3:
-                System.out.println("Procurar Abrigo");
+                findShelterUI.execute();
                 break;
             case 4:
-                System.out.println("Atualizar Abrigo");
+                updateShelterUI.execute();
                 break;
             case 5:
                 System.out.println("Deletar Abrigo");

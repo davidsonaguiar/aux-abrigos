@@ -1,7 +1,9 @@
 package ui.shelter;
 
+import com.compass.common.Response;
 import com.compass.shelter.ShelterController;
 import com.compass.shelter.dtos.CreateShelterRequestDto;
+import com.compass.shelter.dtos.CreateShelterResponseDto;
 import ui.Component;
 import ui.exceptions.OperationCancelledException;
 
@@ -17,12 +19,18 @@ public class CreateShelterUI {
     public void execute() {
         while(true) {
             System.out.println();
-            System.out.println("Criar abrigo");
+            System.out.println("Registro de abrigo");
 
             try {
                 CreateShelterRequestDto formData = createShelterForm();
-                shelterController.create(formData);
-                System.out.println("Abrigo criado com sucesso!");
+                Response<CreateShelterResponseDto> response = shelterController.create(formData);
+
+                System.out.println();
+                System.out.println(response.getMessage());
+
+                if (response.getData() != null) {
+                    System.out.printf("ID: %d - %s\n", response.getData().id(), response.getData().name());
+                }
                 break;
             }
             catch (OperationCancelledException e) {
