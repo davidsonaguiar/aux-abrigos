@@ -24,9 +24,6 @@ public class ShelterService {
             if (shelter == null) throw new NotFoundException("Abrigo não encontrado.");
             return ShelterResponseDto.fromEntity(shelter);
         }
-        catch (NotFoundException exception) {
-            throw exception;
-        }
         catch (NoResultException exception) {
             throw new NotFoundException(exception.getMessage());
         }
@@ -35,7 +32,7 @@ public class ShelterService {
     public List<ShelterResponseDto> findAll() throws NotFoundException, DaoException {
         try {
            List<ShelterEntity> shelters = shelterDao.findAll();
-              return ShelterResponseDto.fromEntityList(shelters);
+          return ShelterResponseDto.fromEntityList(shelters);
         }
         catch (NoResultException exception) {
             throw new NotFoundException("Nenhum abrigo cadastrado.");
@@ -44,7 +41,7 @@ public class ShelterService {
 
     public CreateShelterResponseDto save(CreateShelterRequestDto shelterDto) throws ContentConflictException, DaoException {
         try {
-            ShelterEntity shelterEntity = shelterDao.findByName(shelterDto.name());
+            shelterDao.findByName(shelterDto.name());
             throw new ContentConflictException("Abrigo já cadastrado.");
         }
         catch (NoResultException exception) {
@@ -52,15 +49,22 @@ public class ShelterService {
             newShelter = shelterDao.save(newShelter);
             return CreateShelterResponseDto.fromEntity(newShelter);
         }
-        catch (ContentConflictException exception) {
-            throw exception;
-        }
     }
 
-    public ShelterResponseDto update(UpdateShelterRequestDto shelterDto) {
+    public ShelterResponseDto update(UpdateShelterRequestDto shelterDto) throws NotFoundException, ContentConflictException, DaoException {
+        ShelterEntity shelter;
+
         try {
-            ShelterEntity shelter = shelterDao.findById(shelterDto.id());
-            if(shelter == null) throw new NotFoundException("Abrigo não encontrado.");
+            shelter = shelterDao.findByName(shelterDto.name());
+        }
+        catch (NoResultException exception) {
+            shelter = null;
+        }
+
+        if(shelter != null && shelter.getId() != shelterDto.id()) throw new ContentConflictException("Nome já cadastrado.");
+
+        try {
+            shelter = shelterDao.findById(shelterDto.id());
 
             shelter.setName(shelterDto.name());
             shelter.setAddress(shelterDto.address());
@@ -73,11 +77,15 @@ public class ShelterService {
             ShelterEntity updatedShelter = shelterDao.update(shelter);
             return ShelterResponseDto.fromEntity(updatedShelter);
         }
-        catch (NotFoundException exception) {
-            throw exception;
+        catch (NoResultException exception) {
+            throw new NotFoundException("Abrigo não encontrado.");
         }
-        catch (DaoException exception) {
-            throw exception;
-        }
+    }
+
+    public ShelterResponseDto delete(long id) throws NotFoundException, DaoException {
+        ShelterEntity shelter = shelterDao.findById(id);
+        if(shelter == null) throw new NotFoundException("Abrigo não encontrado.");
+        shelterDao.deleteById(shelter.getId());
+        return ShelterResponseDto.fromEntity(shelter);
     }
 }

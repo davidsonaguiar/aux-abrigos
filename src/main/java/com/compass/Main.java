@@ -23,10 +23,7 @@ import ui.Component;
 import ui.Menu;
 import ui.donation.*;
 import ui.item.UpdateItemUI;
-import ui.shelter.CreateShelterUI;
-import ui.shelter.FindShelderUI;
-import ui.shelter.ListShelterUI;
-import ui.shelter.UpdateShelterUI;
+import ui.shelter.*;
 
 import java.util.Scanner;
 
@@ -85,10 +82,11 @@ public class Main {
         ListShelterUI listShelterUI = new ListShelterUI(shelterController, component);
         FindShelderUI findShelderUI = new FindShelderUI(shelterController, component);
         UpdateShelterUI updateShelterUI = new UpdateShelterUI(shelterController, component);
+        DeleteShelterUI deleteShelterUI = new DeleteShelterUI(shelterController, component);
 
         Menu menu = new Menu(component);
         menu.getDonationUI(registerDonationByFileUI, registerDonationUI, listDonationUI, findDonationUI, updateDonationUI, deleteDonationUI);
-        menu.getShelterUI(createShelterUI, listShelterUI, findShelderUI, updateShelterUI);
+        menu.getShelterUI(createShelterUI, listShelterUI, findShelderUI, updateShelterUI, deleteShelterUI);
 
         return menu;
     }

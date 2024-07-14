@@ -3,10 +3,7 @@ package ui;
 import com.compass.donation.DonationController;
 import ui.donation.*;
 import ui.exceptions.OperationCancelledException;
-import ui.shelter.CreateShelterUI;
-import ui.shelter.FindShelderUI;
-import ui.shelter.ListShelterUI;
-import ui.shelter.UpdateShelterUI;
+import ui.shelter.*;
 
 public class Menu {
     private RegisterDonationByFileUI registerDonationByFileUI;
@@ -20,6 +17,7 @@ public class Menu {
     private ListShelterUI listShelterUI;
     private FindShelderUI findShelterUI;
     private UpdateShelterUI updateShelterUI;
+    private DeleteShelterUI deleteShelterUI;
 
     private Component component;
 
@@ -42,11 +40,17 @@ public class Menu {
         this.deleteDonationUI = deleteDonationUI;
     }
 
-    public void getShelterUI(CreateShelterUI createShelterUI, ListShelterUI listShelterUI, FindShelderUI findShelterUI, UpdateShelterUI updateShelterUI) {
+    public void getShelterUI(
+            CreateShelterUI createShelterUI,
+            ListShelterUI listShelterUI,
+            FindShelderUI findShelterUI,
+            UpdateShelterUI updateShelterUI,
+            DeleteShelterUI deleteShelterUI) {
         this.createShelterUI = createShelterUI;
         this.listShelterUI = listShelterUI;
         this.findShelterUI = findShelterUI;
         this.updateShelterUI = updateShelterUI;
+        this.deleteShelterUI = deleteShelterUI;
     }
 
     public void execute() {
@@ -84,37 +88,45 @@ public class Menu {
     }
 
     private void shelterMenu() {
-        System.out.println("Menu de Abrigos:");
-        System.out.println("1 - Criar Abrigo");
-        System.out.println("2 - Listar Abrigos");
-        System.out.println("3 - Procurar Abrigo");
-        System.out.println("4 - Atualizar Abrigo");
-        System.out.println("5 - Deletar Abrigo");
+        while(true) {
+            try {
+                System.out.println();
+                System.out.println("Menu de Abrigos:");
+                System.out.println("1 - Criar Abrigo");
+                System.out.println("2 - Listar Abrigos");
+                System.out.println("3 - Procurar Abrigo");
+                System.out.println("4 - Atualizar Abrigo");
+                System.out.println("5 - Deletar Abrigo");
 
-        String label = "Escollha uma opção:";
-        String textInfo = "Digite um número inteiro entre 1 e 5.";
-        String minError = "Opção inválida. O valor mínimo é 1.";
-        String maxError = "Opção inválida. O valor máximo é 5.";
-        Integer option = component.intField(label, textInfo, 0, minError, 5, maxError);
+                String label = "Escollha uma opção:";
+                String textInfo = "Digite um número inteiro entre 1 e 5.";
+                String minError = "Opção inválida. O valor mínimo é 1.";
+                String maxError = "Opção inválida. O valor máximo é 5.";
+                Integer option = component.intField(label, textInfo, 0, minError, 5, maxError);
 
-        switch (option) {
-            case 1:
-                createShelterUI.execute();
+                switch (option) {
+                    case 1:
+                        createShelterUI.execute();
+                        break;
+                    case 2:
+                        listShelterUI.execute();
+                        break;
+                    case 3:
+                        findShelterUI.execute();
+                        break;
+                    case 4:
+                        updateShelterUI.execute();
+                        break;
+                    case 5:
+                        deleteShelterUI.execute();
+                        break;
+                    default:
+                        System.out.println("Opção inválida. Tente novamente.");
+                }
+            }
+            catch (OperationCancelledException exception) {
                 break;
-            case 2:
-                listShelterUI.execute();
-                break;
-            case 3:
-                findShelterUI.execute();
-                break;
-            case 4:
-                updateShelterUI.execute();
-                break;
-            case 5:
-                System.out.println("Deletar Abrigo");
-                break;
-            default:
-                System.out.println("Opção inválida. Tente novamente.");
+            }
         }
     }
 

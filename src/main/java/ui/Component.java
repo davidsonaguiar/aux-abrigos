@@ -136,8 +136,14 @@ public class Component {
                     default:
                         System.out.println("Opção inválida. Por favor, digite 1 para Sim ou 2 para Não.");
                 }
-            } catch (NumberFormatException exception) {
+            }
+            catch (NumberFormatException exception) {
                 System.out.println("Por favor, digite um número válido.");
+            }
+            catch (InputMismatchException exception) {
+                System.out.println();
+                System.out.println("Entrada inválida. Por favor, digite um número.");
+                scanner.next();
             }
         }
     }
@@ -371,7 +377,7 @@ public class Component {
         Integer unitColLength = 5;
         Integer hygieneTypeColLength = 10;
 
-        String line = "%s | %s | %s | %s | %s | %s | %s | %s | %s | %s\n";
+        String line = "%s | %s | %s | %s | %s | %s | %s | %s | %s \n";
 
         System.out.println();
         System.out.println("Itens da doação:");

@@ -25,7 +25,7 @@ public class FindShelderUI {
         String error = "ID inválido. O valor mínimo é 1.";
         Integer shelterId = component.intField(label, textInfo, 1, error, null, null);
 
-        Response<ShelterResponseDto> response = shelterController.findShelter(shelterId.longValue());
+        Response<ShelterResponseDto> response = shelterController.findById(shelterId.longValue());
 
         System.out.println();
         System.out.println(response.getMessage());

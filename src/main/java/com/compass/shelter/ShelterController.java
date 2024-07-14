@@ -38,7 +38,7 @@ public class ShelterController {
         }
     }
 
-    public Response<ShelterResponseDto> findShelter(Long shelterId) {
+    public Response<ShelterResponseDto> findById(Long shelterId) {
         try {
             ShelterResponseDto shelter = shelterService.findShelterById(shelterId);
             return new Response<>(shelter, "Abrigo recuperado com sucesso!");
@@ -51,9 +51,20 @@ public class ShelterController {
     public Response<ShelterResponseDto> updateShelter(UpdateShelterRequestDto updateShelterRequestDto) {
         try {
             ShelterResponseDto shelter = shelterService.update(updateShelterRequestDto);
+            System.out.println(shelter);
             return new Response<>(shelter, "Abrigo atualizado com sucesso!");
         }
         catch (ContentConflictException | NotFoundException | DaoException exception) {
+            return new Response<>(null, exception.getMessage());
+        }
+    }
+
+    public Response<ShelterResponseDto> delete(long id) {
+        try {
+            ShelterResponseDto shelter = shelterService.delete(id);
+            return new Response<>(shelter, "Abrigo excluído com sucesso!");
+        }
+        catch (NotFoundException | DaoException exception) {
             return new Response<>(null, exception.getMessage());
         }
     }
