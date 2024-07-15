@@ -1,9 +1,7 @@
 package com.compass.order;
 
-import com.compass.center.CenterEntity;
-import com.compass.item.ItemEntity;
 import com.compass.item.enums.*;
-import com.compass.order.enums.StatusOrder;
+import com.compass.order_center.OrderCenterEntity;
 import com.compass.shelter.ShelterEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
@@ -13,7 +11,6 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -51,25 +48,11 @@ public class OrderEntity implements Serializable {
     @Enumerated(EnumType.STRING)
     private HygieneTypeItem hygieneType;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    @NotNull(message = "Status do pedido é obrigatório")
-    private StatusOrder status;
-
     @ManyToOne
     @JoinColumn(name = "shelter_id")
     @NotNull(message = "Abrigo do pedido é obrigatório")
     private ShelterEntity shelter;
 
-    @ManyToOne
-    @JoinColumn(name = "supplier_id")
-    private CenterEntity supplierCenter;
-
-    @ManyToMany
-    @JoinTable(
-            name = "order_center",
-            joinColumns = @JoinColumn(name = "order_id"),
-            inverseJoinColumns = @JoinColumn(name = "center_id")
-    )
-    private List<CenterEntity> centersRequested;
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    private List<OrderCenterEntity> orderCenter;
 }

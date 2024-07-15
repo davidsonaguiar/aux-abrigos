@@ -34,13 +34,11 @@ public class ItemEntity {
 
     @ManyToOne
     @JoinColumn(name = "center_id", nullable = false)
-    @NotNull(message = "Centro para qual o item será doado é obrigatório")
     private CenterEntity center;
 
     @ManyToOne
     @JoinColumn(name = "shelter_id")
     private ShelterEntity shelter;
-
 
     @Enumerated(EnumType.STRING)
     private SizeItem size;

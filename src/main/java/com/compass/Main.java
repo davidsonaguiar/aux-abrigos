@@ -18,6 +18,8 @@ import com.compass.order.OrderController;
 import com.compass.order.OrderDao;
 import com.compass.order.OrderEntity;
 import com.compass.order.OrderService;
+import com.compass.order_center.OrderCenterDao;
+import com.compass.order_center.OrderCenterService;
 import com.compass.shelter.ShelterController;
 import com.compass.shelter.ShelterDao;
 import com.compass.shelter.ShelterEntity;
@@ -28,6 +30,7 @@ import ui.Menu;
 import ui.donation.*;
 import ui.item.UpdateItemUI;
 import ui.order.CreateOrderUI;
+import ui.order.ListOrderUI;
 import ui.shelter.*;
 
 import java.util.Scanner;
@@ -72,8 +75,11 @@ public class Main {
         ShelterService shelterService = new ShelterService(shelterDao);
         ShelterController shelterController = new ShelterController(shelterService);
 
+        OrderCenterDao orderCenterDao = new OrderCenterDao(entityManager, OrderEntity.class);
+        OrderCenterService orderCenterService = new OrderCenterService(orderCenterDao);
+
         OrderDao orderDao = new OrderDao(entityManager, OrderEntity.class);
-        OrderService orderService = new OrderService(orderDao, shelterService, centerService);
+        OrderService orderService = new OrderService(orderDao, shelterService, centerService, orderCenterService);
         OrderController orderController = new OrderController(orderService);
 
         Component component = new Component(scanner);
@@ -94,11 +100,12 @@ public class Main {
         DeleteShelterUI deleteShelterUI = new DeleteShelterUI(shelterController, component);
 
         CreateOrderUI createOrderUI = new CreateOrderUI(orderController, centerController, shelterController, component);
+        ListOrderUI listOrderUI = new ListOrderUI(orderController, centerController, component);
 
         Menu menu = new Menu(component);
         menu.getDonationUI(registerDonationByFileUI, registerDonationUI, listDonationUI, findDonationUI, updateDonationUI, deleteDonationUI);
         menu.getShelterUI(createShelterUI, listShelterUI, findShelderUI, updateShelterUI, deleteShelterUI);
-        menu.getOrderUI(createOrderUI);
+        menu.getOrderUI(createOrderUI, listOrderUI);
 
         return menu;
     }

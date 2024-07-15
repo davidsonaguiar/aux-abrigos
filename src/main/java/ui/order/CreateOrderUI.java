@@ -3,14 +3,12 @@ package ui.order;
 import com.compass.center.CenterController;
 import com.compass.center.dtos.CenterResponseDto;
 import com.compass.common.Response;
-import com.compass.item.dtos.ItemDto;
 import com.compass.item.enums.*;
 import com.compass.order.OrderController;
 import com.compass.order.dtos.CreateOrderRequestDto;
 import com.compass.order.dtos.OrderResponseDto;
 import com.compass.shelter.ShelterController;
 import com.compass.shelter.dtos.ShelterResponseDto;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import ui.Component;
 
 import java.util.*;
@@ -88,7 +86,7 @@ public class CreateOrderUI {
             }
         }
 
-            ShelterResponseDto shelter;
+        ShelterResponseDto shelter;
 
         while(true) {
             label = "Digite o ID do abrigo";
@@ -168,7 +166,7 @@ public class CreateOrderUI {
         CreateOrderRequestDto createOrderRequestDto = new CreateOrderRequestDto(
                 quantity,
                 shelter.id(),
-                CategoryItem.ALIMENTO,
+                CategoryItem.HIGIENE,
                 centers,
                 null,
                 null,
@@ -192,8 +190,5 @@ public class CreateOrderUI {
         System.out.println("Date de criação: " + order.date());
         System.out.println("Categoria: " + order.categoryItem());
         System.out.println("Centros solicitados:");
-        for(CenterResponseDto center : order.centersRequest()) {
-            System.out.println("Centro: " + center.name());
-        }
     }
 }

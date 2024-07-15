@@ -4,6 +4,7 @@ import com.compass.donation.DonationController;
 import ui.donation.*;
 import ui.exceptions.OperationCancelledException;
 import ui.order.CreateOrderUI;
+import ui.order.ListOrderUI;
 import ui.shelter.*;
 
 public class Menu {
@@ -21,6 +22,7 @@ public class Menu {
     private DeleteShelterUI deleteShelterUI;
 
     private CreateOrderUI createOrderUI;
+    private ListOrderUI listOrderUI;
 
     private Component component;
 
@@ -73,31 +75,19 @@ public class Menu {
                 System.out.println("Menu de Pedidos:");
                 System.out.println("1 - Criar Pedido");
                 System.out.println("2 - Listar Pedidos");
-                System.out.println("3 - Procurar Pedido");
-                System.out.println("4 - Atualizar Pedido");
-                System.out.println("5 - Deletar Pedido");
 
                 String label = "Escollha uma opção:";
-                String textInfo = "Digite um número inteiro entre 1 e 5.";
+                String textInfo = "Digite um número inteiro entre 1 e 2.";
                 String minError = "Opção inválida. O valor mínimo é 1.";
-                String maxError = "Opção inválida. O valor máximo é 5.";
-                Integer option = component.intField(label, textInfo, 0, minError, 5, maxError);
+                String maxError = "Opção inválida. O valor máximo é 2.";
+                Integer option = component.intField(label, textInfo, 1, minError, 2, maxError);
 
                 switch (option) {
                     case 1:
                         createOrderUI.execute();
                         break;
                     case 2:
-                        System.out.println("Listar Pedidos");
-                        break;
-                    case 3:
-                        System.out.println("Procurar Pedido");
-                        break;
-                    case 4:
-                        System.out.println("Atualizar Pedido");
-                        break;
-                    case 5:
-                        System.out.println("Deletar Pedido");
+                        listOrderUI.execute();
                         break;
                     default:
                         System.out.println("Opção inválida. Tente novamente.");
@@ -124,7 +114,7 @@ public class Menu {
                 String textInfo = "Digite um número inteiro entre 1 e 5.";
                 String minError = "Opção inválida. O valor mínimo é 1.";
                 String maxError = "Opção inválida. O valor máximo é 5.";
-                Integer option = component.intField(label, textInfo, 0, minError, 5, maxError);
+                Integer option = component.intField(label, textInfo, 1, minError, 5, maxError);
 
                 switch (option) {
                     case 1:
@@ -200,8 +190,9 @@ public class Menu {
         }
     }
 
-    public void getOrderUI(CreateOrderUI createOrderUI) {
+    public void getOrderUI(CreateOrderUI createOrderUI, ListOrderUI listOrderUI) {
         this.createOrderUI = createOrderUI;
+        this.listOrderUI = listOrderUI;
     }
 
 
