@@ -52,4 +52,11 @@ public class CenterEntity implements Serializable {
                 .sum();
         return (capacity - quantityType) >= quantity;
     }
+
+    public Integer getQuantityCategory(CategoryItem categoryItem) {
+        return items.stream()
+                .filter(item -> item.getCategory().equals(categoryItem) )
+                .mapToInt(item -> 1)
+                .sum();
+    }
 }

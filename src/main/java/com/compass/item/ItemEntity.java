@@ -2,6 +2,7 @@ package com.compass.item;
 
 import com.compass.center.CenterEntity;
 import com.compass.item.enums.*;
+import com.compass.order.OrderEntity;
 import com.compass.shelter.ShelterEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
@@ -22,7 +23,6 @@ public class ItemEntity {
     private Long id;
 
     @Column(nullable = false)
-    @NotBlank(message = "Descrição do item é obrigatória")
     @Size(min = 3, max = 100, message = "Descrição do item deve ter entre 3 e 100 caracteres")
     private String description;
 
@@ -33,7 +33,6 @@ public class ItemEntity {
 
     @ManyToOne
     @JoinColumn(name = "center_id", nullable = false)
-    @NotNull(message = "Centro para qual o item será doado é obrigatório")
     private CenterEntity center;
 
     @ManyToOne

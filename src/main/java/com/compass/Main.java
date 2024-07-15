@@ -14,6 +14,10 @@ import com.compass.item.ItemController;
 import com.compass.item.ItemDao;
 import com.compass.item.ItemEntity;
 import com.compass.item.ItemService;
+import com.compass.order.OrderController;
+import com.compass.order.OrderDao;
+import com.compass.order.OrderEntity;
+import com.compass.order.OrderService;
 import com.compass.shelter.ShelterController;
 import com.compass.shelter.ShelterDao;
 import com.compass.shelter.ShelterEntity;
@@ -23,6 +27,7 @@ import ui.Component;
 import ui.Menu;
 import ui.donation.*;
 import ui.item.UpdateItemUI;
+import ui.order.CreateOrderUI;
 import ui.shelter.*;
 
 import java.util.Scanner;
@@ -67,6 +72,10 @@ public class Main {
         ShelterService shelterService = new ShelterService(shelterDao);
         ShelterController shelterController = new ShelterController(shelterService);
 
+        OrderDao orderDao = new OrderDao(entityManager, OrderEntity.class);
+        OrderService orderService = new OrderService(orderDao, shelterService, centerService);
+        OrderController orderController = new OrderController(orderService);
+
         Component component = new Component(scanner);
 
         UpdateItemUI updateItemUI = new UpdateItemUI(itemController, component);
@@ -84,9 +93,12 @@ public class Main {
         UpdateShelterUI updateShelterUI = new UpdateShelterUI(shelterController, component);
         DeleteShelterUI deleteShelterUI = new DeleteShelterUI(shelterController, component);
 
+        CreateOrderUI createOrderUI = new CreateOrderUI(orderController, centerController, shelterController, component);
+
         Menu menu = new Menu(component);
         menu.getDonationUI(registerDonationByFileUI, registerDonationUI, listDonationUI, findDonationUI, updateDonationUI, deleteDonationUI);
         menu.getShelterUI(createShelterUI, listShelterUI, findShelderUI, updateShelterUI, deleteShelterUI);
+        menu.getOrderUI(createOrderUI);
 
         return menu;
     }

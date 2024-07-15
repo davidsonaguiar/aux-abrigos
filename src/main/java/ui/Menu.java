@@ -3,6 +3,7 @@ package ui;
 import com.compass.donation.DonationController;
 import ui.donation.*;
 import ui.exceptions.OperationCancelledException;
+import ui.order.CreateOrderUI;
 import ui.shelter.*;
 
 public class Menu {
@@ -19,38 +20,12 @@ public class Menu {
     private UpdateShelterUI updateShelterUI;
     private DeleteShelterUI deleteShelterUI;
 
+    private CreateOrderUI createOrderUI;
+
     private Component component;
 
     public Menu(Component component) {
         this.component = component;
-    }
-
-    public void getDonationUI(
-            RegisterDonationByFileUI registerDonationByFileUI,
-            RegisterDonationUI registerDonationUI,
-            ListDonationUI listDonationUI,
-            FindDonationUI findDonationUI,
-            UpdateDonationUI updateDonationUI,
-            DeleteDonationUI deleteDonationUI) {
-        this.registerDonationByFileUI = registerDonationByFileUI;
-        this.registerDonationUI = registerDonationUI;
-        this.listDonationUI = listDonationUI;
-        this.findDonationUI = findDonationUI;
-        this.updateDonationUI = updateDonationUI;
-        this.deleteDonationUI = deleteDonationUI;
-    }
-
-    public void getShelterUI(
-            CreateShelterUI createShelterUI,
-            ListShelterUI listShelterUI,
-            FindShelderUI findShelterUI,
-            UpdateShelterUI updateShelterUI,
-            DeleteShelterUI deleteShelterUI) {
-        this.createShelterUI = createShelterUI;
-        this.listShelterUI = listShelterUI;
-        this.findShelterUI = findShelterUI;
-        this.updateShelterUI = updateShelterUI;
-        this.deleteShelterUI = deleteShelterUI;
     }
 
     public void execute() {
@@ -61,13 +36,14 @@ public class Menu {
                 System.out.println("Menu Principal:");
                 System.out.println("1 - Doações");
                 System.out.println("2 - Abrigos");
+                System.out.println("3 - Pedidos");
 
                 String label = "Escollha uma opção:";
-                String textInfo = "Digite um número inteiro entre 1 e 2.";
+                String textInfo = "Digite um número inteiro entre 1 e 3.";
                 String minError = "Opção inválida. O valor mínimo é 1.";
-                String maxError = "Opção inválida. O valor máximo é 2.";
+                String maxError = "Opção inválida. O valor máximo é 3.";
 
-                Integer option = component.intField(label, textInfo, 0, minError, 2, maxError);
+                Integer option = component.intField(label, textInfo, 0, minError, 3, maxError);
 
                 switch (option) {
                     case 1:
@@ -76,6 +52,9 @@ public class Menu {
                     case 2:
                         shelterMenu();
                         break;
+                    case 3:
+                        orderMenu();
+                        break;
                     default:
                         System.out.println("Opção inválida. Tente novamente.");
                 }
@@ -83,6 +62,49 @@ public class Menu {
                 System.out.println("Operação cancelada.");
                 Boolean finish = component.confirmation("Deseja sair do sistema?");
                 if (finish) exit = true;
+            }
+        }
+    }
+
+    private void orderMenu() {
+        while(true) {
+            try {
+                System.out.println();
+                System.out.println("Menu de Pedidos:");
+                System.out.println("1 - Criar Pedido");
+                System.out.println("2 - Listar Pedidos");
+                System.out.println("3 - Procurar Pedido");
+                System.out.println("4 - Atualizar Pedido");
+                System.out.println("5 - Deletar Pedido");
+
+                String label = "Escollha uma opção:";
+                String textInfo = "Digite um número inteiro entre 1 e 5.";
+                String minError = "Opção inválida. O valor mínimo é 1.";
+                String maxError = "Opção inválida. O valor máximo é 5.";
+                Integer option = component.intField(label, textInfo, 0, minError, 5, maxError);
+
+                switch (option) {
+                    case 1:
+                        createOrderUI.execute();
+                        break;
+                    case 2:
+                        System.out.println("Listar Pedidos");
+                        break;
+                    case 3:
+                        System.out.println("Procurar Pedido");
+                        break;
+                    case 4:
+                        System.out.println("Atualizar Pedido");
+                        break;
+                    case 5:
+                        System.out.println("Deletar Pedido");
+                        break;
+                    default:
+                        System.out.println("Opção inválida. Tente novamente.");
+                }
+            }
+            catch (OperationCancelledException exception) {
+                break;
             }
         }
     }
@@ -176,5 +198,38 @@ public class Menu {
                 break;
             }
         }
+    }
+
+    public void getOrderUI(CreateOrderUI createOrderUI) {
+        this.createOrderUI = createOrderUI;
+    }
+
+
+    public void getDonationUI(
+            RegisterDonationByFileUI registerDonationByFileUI,
+            RegisterDonationUI registerDonationUI,
+            ListDonationUI listDonationUI,
+            FindDonationUI findDonationUI,
+            UpdateDonationUI updateDonationUI,
+            DeleteDonationUI deleteDonationUI) {
+        this.registerDonationByFileUI = registerDonationByFileUI;
+        this.registerDonationUI = registerDonationUI;
+        this.listDonationUI = listDonationUI;
+        this.findDonationUI = findDonationUI;
+        this.updateDonationUI = updateDonationUI;
+        this.deleteDonationUI = deleteDonationUI;
+    }
+
+    public void getShelterUI(
+            CreateShelterUI createShelterUI,
+            ListShelterUI listShelterUI,
+            FindShelderUI findShelterUI,
+            UpdateShelterUI updateShelterUI,
+            DeleteShelterUI deleteShelterUI) {
+        this.createShelterUI = createShelterUI;
+        this.listShelterUI = listShelterUI;
+        this.findShelterUI = findShelterUI;
+        this.updateShelterUI = updateShelterUI;
+        this.deleteShelterUI = deleteShelterUI;
     }
 }
