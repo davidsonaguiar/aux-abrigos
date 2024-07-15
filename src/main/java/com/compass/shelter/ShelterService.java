@@ -18,11 +18,11 @@ public class ShelterService {
         this.shelterDao = shelterDao;
     }
 
-    public ShelterResponseDto findShelterById(Long id) throws NotFoundException, DaoException {
+    public ShelterEntity findShelterById(Long id) throws NotFoundException, DaoException {
         try {
             ShelterEntity shelter = shelterDao.findById(id);
             if (shelter == null) throw new NotFoundException("Abrigo não encontrado.");
-            return ShelterResponseDto.fromEntity(shelter);
+            return shelter;
         }
         catch (NoResultException exception) {
             throw new NotFoundException(exception.getMessage());

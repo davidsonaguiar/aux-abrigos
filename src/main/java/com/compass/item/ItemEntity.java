@@ -2,6 +2,7 @@ package com.compass.item;
 
 import com.compass.center.CenterEntity;
 import com.compass.item.enums.*;
+import com.compass.order.OrderEntity;
 import com.compass.shelter.ShelterEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
@@ -33,7 +34,6 @@ public class ItemEntity {
 
     @ManyToOne
     @JoinColumn(name = "center_id", nullable = false)
-    @NotNull(message = "Centro para qual o item será doado é obrigatório")
     private CenterEntity center;
 
     @ManyToOne

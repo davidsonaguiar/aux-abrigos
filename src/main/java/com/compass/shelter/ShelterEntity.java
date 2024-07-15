@@ -3,16 +3,15 @@ package com.compass.shelter;
 import com.compass.item.ItemEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.io.Serializable;
 import java.util.List;
 
 @Entity
 @Table(name = "TB_SHELTERS")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class ShelterEntity implements Serializable {
@@ -64,4 +63,28 @@ public class ShelterEntity implements Serializable {
 
     @OneToMany(mappedBy = "shelter", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<ItemEntity> items;
+
+    @Override
+    public String toString() {
+        return "ShelterEntity{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", address='" + address + '\'' +
+                ", phone='" + phone + '\'' +
+                ", email='" + email + '\'' +
+                ", responsible='" + responsible + '\'' +
+                ", capacityItem=" + capacityItem +
+                ", capacityPeople=" + capacityPeople +
+                ", occupancy=" + occupancy +
+                ", items=" + items.toString() +
+                '}';
+    }
+
+    public boolean hasCapacityForItem(int quantity) {
+        return capacityItem - occupancy >= quantity;
+    }
+
+    public void addItem(ItemEntity item) {
+        items.add(item);
+    }
 }

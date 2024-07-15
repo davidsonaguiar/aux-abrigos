@@ -1,18 +1,16 @@
 package com.compass.order;
 
-import com.compass.item.ItemEntity;
-import com.compass.order.enums.StatusOrder;
+import com.compass.item.enums.*;
+import com.compass.order_center.OrderCenterEntity;
 import com.compass.shelter.ShelterEntity;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PastOrPresent;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -31,20 +29,30 @@ public class OrderEntity implements Serializable {
     @Column(nullable = false)
     @NotNull(message = "Data do pedido é obrigatória")
     @PastOrPresent(message = "Data do pedido deve ser no passado ou presente")
-    private Date date;
+    private LocalDate date;
+
+    @NotNull
+    @Min(value = 1, message = "O valor mínimo do pedido é 1")
+    private Integer quantity;
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private CategoryItem categoryItem;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    @NotNull(message = "Status do pedido é obrigatório")
-    private StatusOrder status;
+    private SizeItem sizeItem;
+
+    @Enumerated(EnumType.STRING)
+    private GenderItem genderItem;
+
+    @Enumerated(EnumType.STRING)
+    private HygieneTypeItem hygieneType;
 
     @ManyToOne
     @JoinColumn(name = "shelter_id")
     @NotNull(message = "Abrigo do pedido é obrigatório")
     private ShelterEntity shelter;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "ordem_id")
-    @NotEmpty(message = "A lista de itens do pedido não pode ser vazia ou nula")
-    private List<ItemEntity> items;
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    private List<OrderCenterEntity> orderCenter;
 }

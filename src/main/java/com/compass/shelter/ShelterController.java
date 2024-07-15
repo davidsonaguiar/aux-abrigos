@@ -40,8 +40,8 @@ public class ShelterController {
 
     public Response<ShelterResponseDto> findById(Long shelterId) {
         try {
-            ShelterResponseDto shelter = shelterService.findShelterById(shelterId);
-            return new Response<>(shelter, "Abrigo recuperado com sucesso!");
+            ShelterEntity shelter = shelterService.findShelterById(shelterId);
+            return new Response<>(ShelterResponseDto.fromEntity(shelter), "Abrigo recuperado com sucesso!");
         }
         catch (NotFoundException | DaoException exception) {
             return new Response<>(null, exception.getMessage());

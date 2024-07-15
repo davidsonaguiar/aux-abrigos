@@ -1,8 +1,10 @@
 package ui;
 
 import com.compass.center.dtos.CenterResponseDto;
+import com.compass.common.Response;
 import com.compass.common.exception.NotFoundException;
 import com.compass.item.dtos.ItemDto;
+import com.compass.order.dtos.OrderResponseDto;
 import com.compass.shelter.dtos.ShelterResponseDto;
 import ui.exceptions.OperationCancelledException;
 
@@ -464,10 +466,55 @@ public class Component {
         });
     }
 
+    public void printOrders(List<OrderResponseDto> ordersResponse) {
+        Integer idColLength = 10;
+        Integer dateColLength = 15;
+        Integer quantityColLength = 10;
+        Integer categoryColLength = 10;
+        Integer sizeColLength = 10;
+        Integer genderColLength = 10;
+        Integer hygieneTypeColLength = 10;
+        Integer shelterColLength = 25;
+
+        String line = "%s | %s | %s | %s | %s | %s | %s | %s\n";
+
+        System.out.println();
+        System.out.println("Pedidos disponíveis:");
+        System.out.printf(line,
+                padRight("Order ID", idColLength),
+                padRight("Data", dateColLength),
+                padRight("Quantidade", quantityColLength),
+                padRight("Categoria", categoryColLength),
+                padRight("Tamanho", sizeColLength),
+                padRight("Genero", genderColLength),
+                padRight("Tipo", hygieneTypeColLength),
+                padRight("Abrigo", shelterColLength)
+        );
+
+
+        ordersResponse.forEach(order -> {
+            String size = order.sizeItem() == null ? "x" : order.sizeItem().getSize();
+            String gander = order.genderItem() == null ? "x" : order.genderItem().getGender();
+            String hygieneType = order.hygieneType() == null ? "x" : order.hygieneType().getType();
+
+            System.out.printf(line,
+                    padRight(order.id().toString(), idColLength),
+                    padRight(order.date().toString(), dateColLength),
+                    padRight(order.quantity().toString(), quantityColLength),
+                    padRight(order.categoryItem().name(), categoryColLength),
+                    padRight(size, sizeColLength),
+                    padRight(gander, genderColLength),
+                    padRight(hygieneType, hygieneTypeColLength),
+                    padRight(order.shelterId().name(), shelterColLength)
+            );
+        });
+    }
+
     private String padRight(String text, Integer sizeCol) {
         if(text == null) text = "";
         if(text.length() > sizeCol)
             return text.substring(0, sizeCol) + "\t";
         return text + " ".repeat(sizeCol - text.length()) + "\t";
     }
+
 }
