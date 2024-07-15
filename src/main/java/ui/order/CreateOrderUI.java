@@ -117,8 +117,15 @@ public class CreateOrderUI {
         SizeItem size = component.selectOption(SizeItem.class, "Selecione o tamanho da roupa");
         GenderItem gender = component.selectOption(GenderItem.class, "Selecione o gênero da roupa");
 
-        ItemDto item = new ItemDto(null, null, null, CategoryItem.ROUPA, null, size, gender, null, null, null);
-        CreateOrderRequestDto createOrderRequestDto = new CreateOrderRequestDto(quantity, shelter.id(), item, centers);
+        CreateOrderRequestDto createOrderRequestDto = new CreateOrderRequestDto(
+                quantity,
+                shelter.id(),
+                CategoryItem.ROUPA,
+                centers,
+                size,
+                gender,
+                null
+        );
 
         Response<OrderResponseDto> reaponse = orderController.create(createOrderRequestDto);
 
@@ -133,8 +140,15 @@ public class CreateOrderUI {
     public void createOrderFood(Integer quantity, List<CenterResponseDto> centers, ShelterResponseDto shelter) {
         System.out.println();
 
-        ItemDto item = new ItemDto(null, null, null, CategoryItem.ALIMENTO, null, null, null, null, null, null);
-        CreateOrderRequestDto createOrderRequestDto = new CreateOrderRequestDto(quantity, shelter.id(), item, centers);
+        CreateOrderRequestDto createOrderRequestDto = new CreateOrderRequestDto(
+                quantity,
+                shelter.id(),
+                CategoryItem.ALIMENTO,
+                centers,
+                null,
+                null,
+                null
+        );
 
         Response<OrderResponseDto> reaponse = orderController.create(createOrderRequestDto);
 
@@ -151,8 +165,15 @@ public class CreateOrderUI {
 
         HygieneTypeItem hygieneType = component.selectOption(HygieneTypeItem.class, "Selecione o tipo de higiene");
 
-        ItemDto item = new ItemDto(null, null, null, CategoryItem.HIGIENE, null, null, null, null, null, hygieneType);
-        CreateOrderRequestDto createOrderRequestDto = new CreateOrderRequestDto(quantity, shelter.id(), item, centers);
+        CreateOrderRequestDto createOrderRequestDto = new CreateOrderRequestDto(
+                quantity,
+                shelter.id(),
+                CategoryItem.ALIMENTO,
+                centers,
+                null,
+                null,
+                hygieneType
+        );
 
         Response<OrderResponseDto> reaponse = orderController.create(createOrderRequestDto);
 

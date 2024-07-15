@@ -57,30 +57,16 @@ public class OrderService {
                 centerEntities.add(centerEntity);
             }
 
-            ItemEntity item = new ItemEntity(
-                    null,
-                    null,
-                    order.item().category(),
-                    null,
-                    null,
-                    order.item().size(),
-                    order.item().gender(),
-                    order.item().quantity(),
-                    order.item().expirationDate(),
-                    order.item().unit(),
-                    order.item().hygieneType()
-            );
-
-            OrderEntity orderEntity = new OrderEntity(
-                    null,
-                    LocalDate.now(),
-                    order.quantity(),
-                    StatusOrder.PEDENTE,
-                    shelter,
-                    item,
-                    null,
-                    centerEntities
-            );
+            OrderEntity orderEntity = new OrderEntity();
+            orderEntity.setDate(LocalDate.now());
+            orderEntity.setQuantity(order.quantity());
+            orderEntity.setStatus(StatusOrder.PEDENTE);
+            orderEntity.setShelter(shelter);
+            orderEntity.setCentersRequested(centerEntities);
+            orderEntity.setSizeItem(order.sizeItem());
+            orderEntity.setCategoryItem(order.categoryItem());
+            orderEntity.setGenderItem(order.genderItem());
+            orderEntity.setHygieneType(order.hygieneType());
 
             return orderDao.save(orderEntity);
         }

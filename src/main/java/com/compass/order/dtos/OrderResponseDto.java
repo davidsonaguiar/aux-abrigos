@@ -19,9 +19,6 @@ public record OrderResponseDto(
         CategoryItem categoryItem,
         SizeItem sizeItem,
         GenderItem genderItem,
-        LocalDate expirationDate,
-        Integer quantityFood,
-        UnitItem unit,
         HygieneTypeItem hygieneType
 ) {
     public static OrderResponseDto fromEntity(OrderEntity orderEntity) {
@@ -32,13 +29,10 @@ public record OrderResponseDto(
                 orderEntity.getStatus(),
                 ShelterResponseDto.fromEntity(orderEntity.getShelter()),
                 CenterResponseDto.fromList(orderEntity.getCentersRequested()),
-                orderEntity.getItem().getCategory(),
-                orderEntity.getItem().getSize(),
-                orderEntity.getItem().getGender(),
-                orderEntity.getItem().getExpirationDate(),
-                orderEntity.getItem().getQuantity(),
-                orderEntity.getItem().getUnit(),
-                orderEntity.getItem().getHygieneType()
+                orderEntity.getCategoryItem(),
+                orderEntity.getSizeItem(),
+                orderEntity.getGenderItem(),
+                orderEntity.getHygieneType()
         );
     }
 }

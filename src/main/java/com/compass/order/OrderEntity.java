@@ -2,6 +2,7 @@ package com.compass.order;
 
 import com.compass.center.CenterEntity;
 import com.compass.item.ItemEntity;
+import com.compass.item.enums.*;
 import com.compass.order.enums.StatusOrder;
 import com.compass.shelter.ShelterEntity;
 import jakarta.persistence.*;
@@ -37,6 +38,19 @@ public class OrderEntity implements Serializable {
     @Min(value = 1, message = "O valor mínimo do pedido é 1")
     private Integer quantity;
 
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private CategoryItem categoryItem;
+
+    @Enumerated(EnumType.STRING)
+    private SizeItem sizeItem;
+
+    @Enumerated(EnumType.STRING)
+    private GenderItem genderItem;
+
+    @Enumerated(EnumType.STRING)
+    private HygieneTypeItem hygieneType;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @NotNull(message = "Status do pedido é obrigatório")
@@ -46,9 +60,6 @@ public class OrderEntity implements Serializable {
     @JoinColumn(name = "shelter_id")
     @NotNull(message = "Abrigo do pedido é obrigatório")
     private ShelterEntity shelter;
-
-    @OneToOne(cascade = CascadeType.ALL)
-    private ItemEntity item;
 
     @ManyToOne
     @JoinColumn(name = "supplier_id")
